@@ -1,0 +1,13 @@
+{
+  "slug": "1020-2101-markdown-python",
+  "idea": "写一个 markdown 转纯文本的 python 命令行小工具，支持从管道读入",
+  "phase": "done",
+  "auto": true,
+  "created": "2026-10-20 21:01",
+  "updated": "2026-10-20 22:41",
+  "inflight": null,
+  "attempts": {},
+  "blocked": false,
+  "paused": false,
+  "steps": 6
+}

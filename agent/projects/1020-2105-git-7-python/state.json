@@ -1,0 +1,13 @@
+{
+  "slug": "1020-2105-git-7-python",
+  "idea": "写一个统计 git 仓库最近 7 天每天提交数的 python 命令行小工具",
+  "phase": "done",
+  "auto": true,
+  "created": "2026-10-20 21:05",
+  "updated": "2026-10-20 21:22",
+  "inflight": null,
+  "attempts": {},
+  "blocked": false,
+  "paused": false,
+  "steps": 7
+}

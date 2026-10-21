@@ -1,0 +1,19 @@
+[Unit]
+Description=DSH 常挂智能体（任务队列 worker）
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/agent
+Environment=AGENT_HOME=/home/ubuntu/agent
+Environment=DSH_HOME=/home/ubuntu/.dsh-user
+Environment=PATH=/home/ubuntu/.local/node/bin:/home/ubuntu/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/home/ubuntu/.dsh-user/dsh-web.env
+ExecStart=/usr/bin/python3 /home/ubuntu/agent/worker.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/home/ubuntu/agent/logs/service.log
+StandardError=append:/home/ubuntu/agent/logs/service.log
+
+[Install]
+WantedBy=default.target

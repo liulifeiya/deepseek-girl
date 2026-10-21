@@ -1,0 +1,11 @@
+[Unit]
+Description=Bind persona 1 to admin private chat after dsh-web starts
+After=dsh-web.service
+PartOf=dsh-web.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/ubuntu/qq-dsh-bot/patches/bind-private-persona.sh
+
+[Install]
+WantedBy=default.target

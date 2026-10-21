@@ -1,0 +1,26 @@
+{
+  "name": "dsh-profile-web",
+  "private": true,
+  "dependencies": {
+    "@momojie-s/dsh-archive-retention": "github:Momojie-S/dsh-archive-retention",
+    "dsh-cron": "^0.1.0",
+    "dsh-onebot-qq": "^0.9.3",
+    "dsh-openwolf": "^0.10.2",
+    "dsh-persona-dafeiyu": "0.4.1",
+    "dsh-proactive": "0.3.1"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "dsh-onebot-qq",
+        "dsh-persona-dafeiyu",
+        "dsh-proactive",
+        "dsh-openwolf",
+        "dsh-cron",
+        "@momojie-s/dsh-archive-retention"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+[Unit]
+Description=Monthly memory consolidation (dsh headless)
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/ubuntu
+Environment=DSH_HOME=/home/ubuntu/.dsh-user
+EnvironmentFile=/home/ubuntu/.dsh-user/dsh-web.env
+ExecStart=/bin/bash -c '/home/ubuntu/.local/share/pnpm/dsh headless "$(cat /home/ubuntu/qq-dsh-bot/monthly-prompt.txt)" >> /home/ubuntu/qq-dsh-bot/monthly.log 2>&1'

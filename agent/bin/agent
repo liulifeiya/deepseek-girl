@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# 给常挂智能体派活。
+#   agent "把 xxx 做了"        排队，立即返回任务号
+#   agent -f 任务文件.md       从文件读任务
+#   agent --status            看队列/最近结果
+#   agent --wait "任务"        排队并等结果打印出来
+set -euo pipefail
+
+BASE="${AGENT_HOME:-/home/ubuntu/agent}"
+INBOX="$BASE/inbox"
+
+floor_stamp() { date +%Y%m%d-%H%M%S; }
+
+enqueue() {
+  local body="$1"
+  mkdir -p "$INBOX"
+  local id
+  id="$(floor_stamp)-$$"
+  local f="$INBOX/$id.task"
+  printf '%s\n' "$body" > "$f"
+  echo "$id"
+}
+
+status() {
+  echo "队列中："
+  if compgen -G "$INBOX/*.task" > /dev/null; then
+    for f in "$INBOX"/*.task; do echo "  - $(basename "$f" .task)"; done
+  else
+    echo "  （空）"
+  fi
+  echo
+  echo "最近完成："
+  ls -1t "$BASE/done" 2>/dev/null | head -5 | sed 's/^/  - /' || true
+  echo
+  echo "最近失败："
+  ls -1t "$BASE/failed" 2>/dev/null | head -5 | sed 's/^/  - /' || true
+  echo
+  if [ -f "$BASE/state/last-run.txt" ]; then
+    echo "上次执行：$(date -d "@$(cat "$BASE/state/last-run.txt")" '+%F %T')"
+  fi
+  if systemctl --user is-active --quiet dsh-agent.service 2>/dev/null; then
+    echo "服务：运行中"
+  else
+    echo "服务：未运行（systemctl --user start dsh-agent）"
+  fi
+}
+
+wait_result() {
+  local id="$1" tries=0
+  while [ $tries -lt 720 ]; do
+    if [ -f "$BASE/done/$id.md" ]; then cat "$BASE/done/$id.md"; return 0; fi
+    if [ -f "$BASE/failed/$id.md" ]; then cat "$BASE/failed/$id.md"; return 1; fi
+    sleep 5; tries=$((tries + 1))
+  done
+  echo "等太久了，任务 $id 还在跑，稍后用 agent --status 看。" >&2
+  return 2
+}
+
+case "${1:-}" in
+  ""|-h|--help)
+    sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'
+    ;;
+  --status)
+    status
+    ;;
+  --project-new)
+    shift
+    auto=""
+    args=()
+    for a in "$@"; do
+      if [ "$a" = "--auto" ]; then auto="--auto"; else args+=("$a"); fi
+    done
+    [ ${#args[@]} -ge 1 ] || { echo "用法: agent --project-new \"想法\" [--auto]" >&2; exit 1; }
+    python3 "$BASE/project.py" new "${args[*]}" $auto
+    ;;
+  --project-list)
+    python3 "$BASE/project.py" list
+    ;;
+  --project-show)
+    python3 "$BASE/project.py" show "$2"
+    ;;
+  --project-approve)
+    python3 "$BASE/project.py" approve "$2"
+    ;;
+  --project-pause|--project-resume)
+    python3 "$BASE/project.py" "${1#--project-}" "$2"
+    ;;
+  -f)
+    [ $# -ge 2 ] || { echo "用法: agent -f 文件" >&2; exit 1; }
+    id="$(enqueue "$(cat "$2")")"
+    echo "已排队：$id"
+    ;;
+  --wait)
+    shift
+    [ $# -ge 1 ] || { echo "用法: agent --wait \"任务\"" >&2; exit 1; }
+    id="$(enqueue "$*")"
+    echo "已排队：$id，等结果…" >&2
+    wait_result "$id"
+    ;;
+  *)
+    id="$(enqueue "$*")"
+    echo "已排队：$id"
+    ;;
+esac

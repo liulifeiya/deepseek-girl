@@ -1,0 +1,19 @@
+[Unit]
+Description=DSH Web (QQ bot backend)
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu
+Environment=DSH_HOME=/home/ubuntu/.dsh-user
+Environment=PATH=/home/ubuntu/.local/node/bin:/home/ubuntu/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/home/ubuntu/.dsh-user/dsh-web.env
+ExecStart=/home/ubuntu/.local/share/pnpm/dsh web --host 127.0.0.1 --port 3080 --no-open
+ExecStartPost=/bin/sh -c '/home/ubuntu/qq-dsh-bot/patches/bind-private-persona.sh >/dev/null 2>&1 &'
+Restart=always
+RestartSec=5
+StandardOutput=append:/home/ubuntu/qq-dsh-bot/dsh-web.log
+StandardError=append:/home/ubuntu/qq-dsh-bot/dsh-web.log
+
+[Install]
+WantedBy=default.target
