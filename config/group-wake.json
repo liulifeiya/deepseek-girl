@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "idleMs": 20000,
   "cooldownMs": 300000,
   "minMessages": 2,

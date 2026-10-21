@@ -89,6 +89,20 @@ PATCHES = {
             "                    if (chunks.length === 1)\n"
             "                        chunks = autoSplitChunks(plain);\n",
         ),
+        (
+            "                    // LOCAL PATCH (auto-split): 没有手动标记时按句子自动分段。\n"
+            "                    if (chunks.length === 1)\n"
+            "                        chunks = autoSplitChunks(plain);\n",
+            "                    // LOCAL PATCH (auto-split): 没有手动标记时按句子自动分段。\n"
+            "                    if (chunks.length === 1)\n"
+            "                        chunks = autoSplitChunks(plain);\n"
+            "                    // LOCAL PATCH (auto-split): 单轮最多 3 条，多出来的并进第 3 条。\n"
+            "                    if (chunks.length > 3) {\n"
+            "                        const head = chunks.slice(0, 2);\n"
+            "                        head.push(chunks.slice(2).join(''));\n"
+            "                        chunks = head;\n"
+            "                    }\n",
+        ),
     ],
     'inbound.js': [
         (
@@ -239,6 +253,166 @@ def patch_persona(lib):
     print('commands.js: persona command applied')
 
 
+MENTION_MARKER = 'LOCAL PATCH (mention-context)'
+
+
+def patch_mention_context(lib):
+    """复制 mention-context.js，并在 inbound 里挂上「@ 时带上下文」。"""
+    here = os.path.dirname(os.path.abspath(__file__))
+    src_path = os.path.join(here, 'mention-context.js')
+    if not os.path.exists(src_path):
+        print('WARN: mention-context.js missing')
+        return
+    with open(src_path) as f:
+        body = f.read()
+    with open(os.path.join(lib, 'mention-context.js'), 'w') as f:
+        f.write(body)
+    print('mention-context.js: copied')
+
+    def apply(name, old, new, marker=None):
+        path = os.path.join(lib, name)
+        with open(path) as f:
+            text = f.read()
+        if marker is not None and marker in text:
+            return
+        if new in text:
+            return
+        if old not in text:
+            print('WARN: mention anchor missing in ' + name)
+            return
+        with open(path, 'w') as f:
+            f.write(text.replace(old, new, 1))
+        print(name + ': mention-context hook applied')
+
+    apply('inbound.js',
+          "import { groupWake, readGroupUserAllow } from './group-wake.js';\n",
+          "import { groupWake, readGroupUserAllow } from './group-wake.js';\n"
+          "// LOCAL PATCH (mention-context): @ 时才取用的群聊上下文\n"
+          "import { buildMentionContext, recordGroupMessage } from './mention-context.js';\n")
+
+    gw = ("        // LOCAL PATCH (group-wake): 未 @ 的群消息也要进缓冲\n"
+          "        if (kind === 'group') {\n"
+          "            try {\n"
+          "                groupWake.note(this.ctx, { ...inbound, mentioned });\n"
+          "            }\n"
+          "            catch {\n"
+          "                // 纯旁路\n"
+          "            }\n"
+          "        }\n")
+    apply('inbound.js', gw,
+          gw + "        // LOCAL PATCH (mention-context): 所有群消息进上下文缓冲，@ 时才取用\n"
+          "        if (kind === 'group') {\n"
+          "            try {\n"
+          "                recordGroupMessage(inbound);\n"
+          "            }\n"
+          "            catch {\n"
+          "                // 纯旁路\n"
+          "            }\n"
+          "        }\n")
+
+    final = ("        let final = wrapUserMessage(content, userId, nickname);\n"
+             "        if (kind === 'group') {\n"
+             "            final = buildGroupMessagePrefix(nickname, userId, mentioned) + final;\n")
+    apply('inbound.js', final,
+          "        let final = wrapUserMessage(content, userId, nickname);\n"
+          "        if (kind === 'group') {\n"
+          "            // LOCAL PATCH (mention-context): @ 时把最近相关的群聊带上\n"
+          "            if (mentioned) {\n"
+          "                const groupContext = buildMentionContext(chatId, userId, nickname);\n"
+          "                if (groupContext !== '')\n"
+          "                    final = groupContext + '\\n' + final;\n"
+          "            }\n"
+          "            final = buildGroupMessagePrefix(nickname, userId, mentioned) + final;\n",
+          'LOCAL PATCH (mention-context): @ 时把最近相关的群聊带上')
+
+
+def patch_sleep_window(lib):
+    """复制 sleep-window.js，并在 inbound 里挂上「法定工作日工作时段不回复」。"""
+    here = os.path.dirname(os.path.abspath(__file__))
+    src_path = os.path.join(here, 'sleep-window.js')
+    if not os.path.exists(src_path):
+        print('WARN: sleep-window.js missing')
+        return
+    with open(src_path) as f:
+        body = f.read()
+    with open(os.path.join(lib, 'sleep-window.js'), 'w') as f:
+        f.write(body)
+    print('sleep-window.js: copied')
+
+    def apply(name, old, new):
+        path = os.path.join(lib, name)
+        with open(path) as f:
+            text = f.read()
+        if new in text:
+            return
+        if old not in text:
+            print('WARN: sleep anchor missing in ' + name)
+            return
+        with open(path, 'w') as f:
+            f.write(text.replace(old, new, 1))
+        print(name + ': sleep-window hook applied')
+
+    apply('inbound.js',
+          "import { buildMentionContext, recordGroupMessage } from './mention-context.js';\n",
+          "import { buildMentionContext, recordGroupMessage } from './mention-context.js';\n"
+          "// LOCAL PATCH (sleep-window): 法定工作日工作时段不回复\n"
+          "import { isSleeping } from './sleep-window.js';\n")
+
+    apply('inbound.js',
+          "        const mentioned = detectMention(inbound.segments, inbound.raw, this.ctx.selfId(), this.ctx.config.botQQ);\n",
+          "        // LOCAL PATCH (sleep-window): 法定工作日工作时段睡觉，任何消息都不回\n"
+          "        if (isSleeping()) {\n"
+          "            this.ctx.log('debug', 'sleep window, ignoring message in ' + chatId);\n"
+          "            return;\n"
+          "        }\n"
+          "        const mentioned = detectMention(inbound.segments, inbound.raw, this.ctx.selfId(), this.ctx.config.botQQ);\n")
+
+
+def patch_persona_lock(lib):
+    """复制 persona-lock.js，并在 inbound 里挂上「管理员锁定 1 号人格」。"""
+    here = os.path.dirname(os.path.abspath(__file__))
+    src_path = os.path.join(here, 'persona-lock.js')
+    if not os.path.exists(src_path):
+        print('WARN: persona-lock.js missing')
+        return
+    with open(src_path) as f:
+        body = f.read()
+    with open(os.path.join(lib, 'persona-lock.js'), 'w') as f:
+        f.write(body)
+    print('persona-lock.js: copied')
+
+    def apply(name, old, new):
+        path = os.path.join(lib, name)
+        with open(path) as f:
+            text = f.read()
+        if new in text:
+            return
+        if old not in text:
+            print('WARN: persona-lock anchor missing in ' + name)
+            return
+        with open(path, 'w') as f:
+            f.write(text.replace(old, new, 1))
+        print(name + ': persona-lock hook applied')
+
+    apply('inbound.js',
+          "import { isSleeping } from './sleep-window.js';\n",
+          "import { isSleeping } from './sleep-window.js';\n"
+          "// LOCAL PATCH (persona-lock): 管理员发言锁定 1 号人格\n"
+          "import { buildPersonaLock } from './persona-lock.js';\n")
+
+    apply('inbound.js',
+          "        let final = wrapUserMessage(content, userId, nickname);\n"
+          "        if (kind === 'group') {\n"
+          "            // LOCAL PATCH (mention-context): @ 时把最近相关的群聊带上\n",
+          "        let final = wrapUserMessage(content, userId, nickname);\n"
+          "        if (kind === 'group') {\n"
+          "            // LOCAL PATCH (persona-lock): 管理员的消息强制用 1 号人格\n"
+          "            const personaLock = buildPersonaLock(userId);\n"
+          "            if (personaLock !== '')\n"
+          "                final = personaLock + '\\n' + final;\n"
+          "            // LOCAL PATCH (mention-context): @ 时把最近相关的群聊带上\n")
+
+
 patch_persona(lib)
 
 for name, pairs in PATCHES.items():
@@ -265,3 +439,6 @@ for name, pairs in PATCHES.items():
 
 # group-wake 依赖 quote 补丁先插好 inbound 的 import，所以放在最后。
 patch_group_wake(lib)
+patch_mention_context(lib)
+patch_sleep_window(lib)
+patch_persona_lock(lib)

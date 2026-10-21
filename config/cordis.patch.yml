@@ -14,9 +14,9 @@
     accessToken: "REPLACE_WITH_YOUR_ONEBOT_TOKEN"
     botQQ: "2836148023"
     adminUsers: ["2812108776"]
-    requireMention: false
+    requireMention: true
     groupPolicy: allowlist
-    groupAllowFrom: ["1003871222"]
+    groupAllowFrom: ["1003871222", "877935643"]
     dmPolicy: open
     workspacePath: /home/ubuntu
     logLevel: info
