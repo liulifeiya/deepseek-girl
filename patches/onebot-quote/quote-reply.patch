@@ -1,0 +1,77 @@
+--- /home/ubuntu/qq-dsh-bot/patches/onebot-quote/outbound.js.orig	2026-10-19 23:37:37.551873652 +0800
++++ outbound.js	2026-10-19 23:40:40.164883164 +0800
+@@ -17,6 +17,9 @@
+ import { renderTextImage } from './t2i/index.js';
+ import { describeError } from './errors.js';
+ import { TRACE_REASONS } from './trace.js';
++/** LOCAL PATCH (quote-reply): chatId → last inbound message_id. A model reply
++ * prefixed with [[quote]] is sent as a QQ quote-reply to that message. */
++export const lastInboundIds = new Map();
+ /** Queued final replies older than this are dropped at drain time (M1-B6). */
+ const PENDING_SEND_TTL_MS = 5 * 60_000;
+ /** Max queued final replies per chat; the oldest is dropped beyond this (M1-B6). */
+@@ -56,6 +59,17 @@
+      */
+     sendToChat(chatId, text, options = {}) {
+         return this.enqueue(chatId, async () => {
++            // LOCAL PATCH (quote-reply): strip a leading [[quote]] / [[引用]]
++            // marker and turn it into a reply segment targeting the chat's most
++            // recent inbound message. No marker = behavior unchanged.
++            if (/^\s*\[\[(?:quote|引用)\]\]/.test(text)) {
++                text = text.replace(/^\s*\[\[(?:quote|引用)\]\]\s*/, '');
++                if (options.replyTo === undefined) {
++                    const lastId = lastInboundIds.get(chatId);
++                    if (lastId !== undefined)
++                        options = { ...options, replyTo: lastId };
++                }
++            }
+             if (!this.ctx.connected()) {
+                 if (options.queuable === true) {
+                     // pipeline-hooks.md #23: the park used to be silent.
+@@ -114,9 +128,21 @@
+             if (!sentCard) {
+                 const plain = stripMarkdown(body);
+                 if (plain !== '') {
+-                    const id = await this.sendMsg(chatId, [{ type: 'text', data: { text: plain } }], options);
+-                    if (id !== undefined)
+-                        ids.push(id);
++                    // LOCAL PATCH (multi-message): a [[split]] marker sends the
++                    // surrounding chunks as separate QQ messages, like a person
++                    // typing several short lines. No marker = one message.
++                    const chunks = plain
++                        .split(/\s*\[\[(?:split|分段)\]\]\s*/)
++                        .map(chunk => chunk.trim())
++                        .filter(chunk => chunk !== '');
++                    for (let index = 0; index < chunks.length; index += 1) {
++                        if (index > 0)
++                            await new Promise(resolve => setTimeout(resolve, 400));
++                        const chunkOptions = index === 0 ? options : { ...options, replyTo: undefined };
++                        const id = await this.sendMsg(chatId, [{ type: 'text', data: { text: chunks[index] } }], chunkOptions);
++                        if (id !== undefined)
++                            ids.push(id);
++                    }
+                 }
+                 else {
+                     // pipeline-hooks.md #30: the empty-body skip used to be silent.
+--- /home/ubuntu/qq-dsh-bot/patches/onebot-quote/inbound.js.orig	2026-10-19 23:37:37.552873668 +0800
++++ inbound.js	2026-10-19 23:37:50.539087680 +0800
+@@ -18,6 +18,9 @@
+ import { buildChatId, buildGroupMessagePrefix, classifyUserRole, dmAllowed, groupAllowed, RESTRICTED_PREFIX, sanitizeNickname, wrapUserMessage, } from './chat.js';
+ import { describeError } from './errors.js';
+ import { currentTrace, TRACE_REASONS } from './trace.js';
++// LOCAL PATCH (quote-reply): record the inbound message id per chat so the
++// outbound pipeline can quote-reply it when a reply carries [[quote]].
++import { lastInboundIds } from './outbound.js';
+ /**
+  * Reduce one raw OneBot 11 event to the neutral inbound shape, or null when
+  * the event is not a processable chat message (notice/recall, meta, unknown
+@@ -201,6 +204,9 @@
+         // messages always queue so the full media pipeline runs for their own
+         // turn). Seam absent = pre-T2 behavior (straight dispatch).
+         const plain = inbound.media.length === 0 && inbound.replyId === undefined && inbound.forwardId === undefined;
++        // LOCAL PATCH (quote-reply): remember this message id for [[quote]] replies.
++        if (inbound.messageId !== undefined)
++            lastInboundIds.set(chatId, inbound.messageId);
+         if (this.ctx.interceptBusyTurn !== undefined
+             && await this.ctx.interceptBusyTurn(chatId, final, role, nickname, plain)) {
+             return;

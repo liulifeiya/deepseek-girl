@@ -1,0 +1,23 @@
+# 用户 patch 层：dsh-onebot-qq 配置覆盖
+# config 覆盖必须挂在顶层同 id 行（见插件 README / cordis.patch.yml 模板）
+- id: system-prompt
+  config:
+    includeHarnessIdentity: false
+    personaPrefix: ""
+- id: persona-dafeiyu
+  config:
+    suffix: ""
+- id: dsh-onebot
+  config:
+    mode: forward
+    url: ws://127.0.0.1:3001
+    accessToken: "REPLACE_WITH_YOUR_ONEBOT_TOKEN"
+    botQQ: "2836148023"
+    adminUsers: ["2812108776"]
+    requireMention: false
+    groupPolicy: allowlist
+    groupAllowFrom: ["1003871222"]
+    dmPolicy: open
+    workspacePath: /home/ubuntu
+    logLevel: info
+    interimMessages: false

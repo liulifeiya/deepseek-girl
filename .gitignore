@@ -1,0 +1,14 @@
+# secrets
+*.env
+*onebot-token*
+*dsh-webui*
+*napcat-webui*
+*.git-credentials
+
+# 机器生成
+__pycache__/
+node_modules/
+*.pyc
+
+# 大备份
+*.bak-*
