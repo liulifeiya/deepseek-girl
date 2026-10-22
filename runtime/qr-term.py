@@ -4,12 +4,14 @@
 用法: ~/tts-venv/bin/python ~/qq-dsh-bot/qr-term.py [png路径]
 默认读 NapCat 的登录二维码缓存。直接在 SSH 终端里扫即可。
 """
+import os
 import sys
 from math import gcd
 from PIL import Image
 
+HOME = os.environ.get("BOT_HOME", "/home/ubuntu")
 PATH = sys.argv[1] if len(sys.argv) > 1 else (
-    "/home/ubuntu/Napcat/opt/QQ/resources/app/app_launcher/napcat/cache/qrcode.png"
+    HOME + "/Napcat/opt/QQ/resources/app/app_launcher/napcat/cache/qrcode.png"
 )
 
 

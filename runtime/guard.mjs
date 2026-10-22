@@ -12,7 +12,7 @@ import { promisify } from 'node:util';
 
 const execFileP = promisify(execFile);
 
-const HOME = '/home/ubuntu';
+const HOME = process.env.BOT_HOME || '/home/ubuntu';
 const BOT = `${HOME}/qq-dsh-bot`;
 const TOKEN = fs.readFileSync(`${BOT}/onebot-token.txt`, 'utf8').trim();
 const WS_URL = 'ws://127.0.0.1:3001';
@@ -20,7 +20,7 @@ const LOG = `${BOT}/guard.log`;
 const STATE_FILE = `${BOT}/guard-state.json`;
 const PID_FILE = `${BOT}/guard.pid`;
 const QR_SRC = `${HOME}/Napcat/opt/QQ/resources/app/app_launcher/napcat/cache/qrcode.png`;
-const ADMIN = 2812108776;
+const ADMIN = Number(process.env.ADMIN_QQ || 2812108776);
 
 const TICK = 30_000;              // 探活间隔
 const FAIL_TO_RESTART = 3;        // 连续失败几次才重启
