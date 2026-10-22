@@ -1,7 +1,0 @@
-[Unit]
-Description=QQ proactive greeting (one message per run)
-
-[Service]
-Type=oneshot
-EnvironmentFile=/home/ubuntu/.dsh-user/dsh-web.env
-ExecStart=/home/ubuntu/bot/.venv/bin/python /home/ubuntu/qq-dsh-bot/proactive.py --send

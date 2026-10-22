@@ -5,7 +5,7 @@ PartOf=dsh-web.service
 
 [Service]
 Type=oneshot
-ExecStart=/home/ubuntu/qq-dsh-bot/patches/bind-private-persona.sh
+ExecStart=@BOT_HOME@/qq-dsh-bot/patches/bind-private-persona.sh
 
 [Install]
 WantedBy=default.target

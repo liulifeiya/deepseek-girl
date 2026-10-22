@@ -1,6 +1,0 @@
-[Unit]
-Description=Rotate napcat.log when it grows past 10M
-
-[Service]
-Type=oneshot
-ExecStart=/usr/sbin/logrotate -s /home/ubuntu/.dsh-user/logrotate.state /home/ubuntu/.dsh-user/logrotate-napcat.conf

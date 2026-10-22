@@ -12,3 +12,8 @@ node_modules/
 
 # 大备份
 *.bak-*
+
+# 部署/迁移产物
+deploy/deploy.conf
+qqbot-migrate-*.tar.gz*
+*.tar.gz

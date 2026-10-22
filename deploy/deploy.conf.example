@@ -1,0 +1,43 @@
+# 部署配置：复制为 deploy/deploy.conf 后按实际情况改。
+# deploy.conf 已在 .gitignore 里，不会被提交。
+#
+# 注意：BOT_HOME 建议保持 /home/ubuntu。改成别的用户名也能装，
+# 但 dsh 的会话目录名是从工作目录算出来的（--home-ubuntu--），
+# 老会话不会自动跟过去，/new 之后的新会话不受影响。
+
+# 机器上的家目录（= 运行用户的家目录）
+BOT_HOME=/home/ubuntu
+
+# 机器人 QQ 号、管理员 QQ 号
+BOT_QQ=2836148023
+ADMIN_QQ=2812108776
+
+# NapCat 的 OneBot WS 端口 + dsh Web 端口
+NAPCAT_WS_PORT=3001
+DSH_PORT=3080
+
+# 两端共用的 OneBot Token，随便生成一串 32 字节 hex：
+#   openssl rand -hex 32
+ONEBOT_TOKEN=REPLACE_WITH_32_BYTE_HEX
+
+# DeepSeek API Key（dsh 调模型用）
+DEEPSEEK_API_KEY=
+
+# TTS/音乐脚本的 Key（不用就留空，脚本会跳过）
+MIMO_API_KEY=
+MUREKA_API_KEY=
+
+# PyPI 镜像（国内机器可设 https://pypi.tuna.tsinghua.edu.cn/simple）
+PIP_INDEX_URL=
+
+# 群白名单，空格分隔；留空 = 不启用群聊
+GROUP_ALLOW="1003871222 877935643"
+
+# 版本锁：换版本前先看 dsh-onebot-qq 补丁是否还能打上
+NODE_VERSION=24.19.0
+DSH_VERSION=0.2.0-rc.2
+
+# 组件开关（1 装，0 跳过）
+WITH_NAPCAT=1
+WITH_TTS=1
+WITH_AGENT=1

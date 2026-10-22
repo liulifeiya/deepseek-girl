@@ -1,0 +1,8 @@
+packages:
+  - .
+
+nodeLinker: hoisted
+autoInstallPeers: false
+hoist: false
+onlyBuiltDependencies:
+  - "@momojie-s/dsh-archive-retention@https://codeload.github.com/Momojie-S/dsh-archive-retention/tar.gz/2cdd2def3e4fea4781d4f3497175929aa224a3bb"
