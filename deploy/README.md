@@ -109,6 +109,7 @@ NapCat 不能自动登录，第一次要扫码：
 ## 计划任务
 
 `DshBot-DSH`、`DshBot-Workers`、`DshBot-Agent`、`DshBot-NapCat`（登录触发）、
+`DshBot-Web`（登录触发，DSH Web GUI 3080）、
 `DshBot-DailyRestart`（每日 05:00）、`DshBot-Monthly`（每 4 周）、
 `DshBot-Proactive-1030/1530/2030`、`DshBot-PersonaBind`（每分钟补绑人设）、
 `DshBot-BootCheck`（SYSTEM / 开机，写 `qq-dsh-bot\boot.log`）。
@@ -135,7 +136,7 @@ QQ/NapCat 是 GUI 程序，**必须有交互式登录会话**才能跑；只把�
 注意：
 - 自动登录意味着控制台/带外管理（VNC）能直接进入桌面，云服务器请评估这一点。
 - 三个启动脚本（DSH / NapCat / Workers）都是幂等的：自动登录后你再 RDP 登录，不会重复起进程。
-- 本仓库不管 DSH Web GUI（3080）的自启；重启后要聊天的界面需要你自己 `dsh web` 或另加计划任务。
+- 本仓库现在也会自启 DSH Web GUI（3080）：任务 `DshBot-Web`，日志在 `.dsh\logs\dsh-web-console.log`。
 - 想验证真正的重启链路，重启后回来看 `qq-dsh-bot\boot.log` 与 `verify-autostart.ps1` 的输出。
 
 ## 已知差异

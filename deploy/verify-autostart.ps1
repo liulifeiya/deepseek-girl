@@ -1,4 +1,4 @@
-﻿# deploy/verify-autostart.ps1 — 检查「重启后是否无需人工登录即可自启」
+# deploy/verify-autostart.ps1 — 检查「重启后是否无需人工登录即可自启」
 #
 #   .\deploy\verify-autostart.ps1
 #
@@ -40,7 +40,7 @@ foreach ($t in $tasks) {
 $atStartup = @($tasks | Where-Object { $_.Triggers | Where-Object { $_.CimClass.CimClassName -match 'BootTrigger' } })
 $atLogon = @($tasks | Where-Object { $_.Triggers | Where-Object { $_.CimClass.CimClassName -match 'LogonTrigger' } })
 Check '存在开机任务' ($atStartup.Count -ge 1) "共 $($atStartup.Count) 个（应含 DshBot-BootCheck）"
-Check '存在登录任务' ($atLogon.Count -ge 1) "共 $($atLogon.Count) 个（DSH/Workers/Agent/NapCat）"
+Check '存在登录任务' ($atLogon.Count -ge 1) "共 $($atLogon.Count) 个（DSH/Workers/Agent/NapCat/Web）"
 
 Write-Host "`n== 上次开机自检"
 $bootLog = 'C:\Users\Administrator\qq-dsh-bot\boot.log'

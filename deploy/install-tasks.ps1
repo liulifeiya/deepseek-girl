@@ -1,4 +1,4 @@
-# Register Windows scheduled tasks that replace the systemd user units.
+﻿# Register Windows scheduled tasks that replace the systemd user units.
 # Run once:  powershell -ExecutionPolicy Bypass -File install-tasks.ps1
 $bot = 'C:\Users\Administrator\qq-dsh-bot'
 $ps  = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
@@ -21,6 +21,8 @@ New-Task 'DshBot-DSH'     'start-dsh.ps1'    $logon
 New-Task 'DshBot-Workers' 'start-workers.ps1' $logon
 New-Task 'DshBot-Agent'   'start-agent.ps1'  $logon
 New-Task 'DshBot-NapCat'  'start-napcat.ps1' $logon
+# DSH Web GUI（3080，聊天界面）
+New-Task 'DshBot-Web'     'start-dsh-web.ps1' $logon
 
 New-Task 'DshBot-DailyRestart' 'restart-dsh.ps1' (New-ScheduledTaskTrigger -Daily -At 05:00)
 New-Task 'DshBot-Monthly'      'run-monthly.ps1' (New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday -At 05:00 -WeeksInterval 4)
