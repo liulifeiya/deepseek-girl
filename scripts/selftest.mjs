@@ -73,8 +73,8 @@ try {
   // 补丁是否还在（pnpm install 会还原 node_modules）
   const p = path.join(DSH_HOME, 'profiles', 'qq', 'node_modules', '@momojie-s', 'dsh-archive-retention', 'lib', 'index.js');
   const s = fs.readFileSync(p, 'utf8');
-  const hasAll = ['LOCAL PATCH (retention-fix)', 'latestArtifactSync', 'takeLock', 'wouldDelete'].every((k) => s.includes(k));
-  check('archive-retention', hasAll, hasAll ? '文件名兼容/dryRun/锁 均已打' : '补丁缺失，跑一次 patch-archive-retention.py');
+  const hasAll = ['LOCAL PATCH (retention-fix)', 'LOCAL PATCH (retention-fix2)', 'latestArtifactSync', 'quarantine', 'takeLock', 'maxTotalBytes'].every((k) => s.includes(k));
+  check('archive-retention', hasAll, hasAll ? '文件名/dryRun/回收站/容量/锁 均已打' : '补丁缺失，依次跑 patch-archive-retention.py 与 -2.py');
 } catch (e) { fail('archive-retention', e.message); }
 
 try {

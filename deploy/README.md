@@ -89,7 +89,22 @@ NapCat 不能自动登录，第一次要扫码：
 | 脚本 | 作用 |
 |---|---|
 | `apply-onebot-patches.py` | dsh-onebot-qq：引用回复 / 分段 / 群聊插话 / @ 上下文 / 作息 / 人设锁定 / 语音模型路径 / 图片入库 / `/persona` 端口 |
-| `patch-archive-retention.py` | archive-retention：会话文件名兼容、dryRun、清单含失败、cron 校验、状态持久化、跨进程锁 |
+| `patch-archive-retention.py` | archive-retention v1：会话文件名兼容、dryRun、清单含失败、cron 校验、状态持久化、跨进程锁 |
+| `patch-archive-retention-2.py` | archive-retention v2：回收站（`_trash/<时间戳>`，默认 72h 后物理清）、`maxTotalBytes` 容量上限、`archive-list.json` 补充归档名单 |
+
+### archive-retention 配置（插件页或 cordis.patch.yml）
+
+| 字段 | 默认 | 说明 |
+|---|---|---|
+| `enabled` | `true` | 总开关 |
+| `dryRun` | `false` | 只写清单、不删 |
+| `retentionValue` / `retentionUnit` | `7` / `days` | 归档保留期 |
+| `trashRetentionHours` | `72` | 回收站保留小时数，到期物理删除 |
+| `maxTotalBytes` | `0` | 归档总量上限（0=关闭），超限按最旧优先清 |
+| `extraArchivedIdsFile` | `archive-list.json` | 机器人本地归档名单（用 `deploy\archive-session.ps1` 维护） |
+| `sweepCron` | `0 4 * * *` | 清扫节奏；非法表达式会告警并回落默认 |
+
+`deploy\archive-session.ps1 add|remove|list <sessionId>` 维护 `.dsh-qq\archive-list.json`。
 
 ## 计划任务
 

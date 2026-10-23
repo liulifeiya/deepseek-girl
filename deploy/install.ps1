@@ -184,6 +184,9 @@ if ($DryRun) {
   # archive-retention 补丁：文件名兼容 / dryRun / 清单 / cron 校验 / 状态持久化 / 跨进程锁
   & $py (Join-Path $Repo 'patches\patch-archive-retention.py')
   if ($LASTEXITCODE -ne 0) { throw 'patch-archive-retention.py failed' }
+  # v2：回收站 / 容量上限 / 机器人本地归档名单
+  & $py (Join-Path $Repo 'patches\patch-archive-retention-2.py')
+  if ($LASTEXITCODE -ne 0) { throw 'patch-archive-retention-2.py failed' }
 }
 
 # ---------------------------------------------------------------- 40-botfiles

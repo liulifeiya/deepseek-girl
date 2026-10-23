@@ -60,7 +60,7 @@ profile `qq` 装了 6 个插件：`dsh-onebot-qq 0.9.3`、`dsh-persona-dafeiyu 0
 | dsh-proactive | 正常；数据目录 `.dsh-qq\proactive`，安静时段 23:00–08:00 | 无需改动 |
 | dsh-openwolf | 会给 AGENTS.md 注入 20KB 解剖表（含 QQ 表情包路径），每轮白烧 token | 配置 `injectAgentsMd: false` + ignore 列表 |
 | dsh-cron | 纯解析库，peer 依赖由 dsh 提供 | 无需改动 |
-| dsh-archive-retention | 会话文件名写死 `session.jsonl.zstd`（实际 `session.v4.jsonl.zstd`），孤儿清理失效；无 dryRun；失败不落盘；非法 cron 静默；重启丢 lastSweepAt；无跨进程锁 | `patches/patch-archive-retention.py` 一次性修掉这 6 项 |
+| dsh-archive-retention | 会话文件名写死 `session.jsonl.zstd`（实际 `session.v4.jsonl.zstd`），孤儿清理失效；无 dryRun；失败不落盘；非法 cron 静默；重启丢 lastSweepAt；无跨进程锁；删除不可恢复；无容量上限；GUI 归档名单在机器人 profile 里空转 | v1 修前 6 项；v2 加回收站（`_trash`，72h）、`maxTotalBytes`、`archive-list.json` 本地名单 |
 
 ## 四、Windows 上的路径约定
 
