@@ -47,6 +47,12 @@
 - 画面内容只写进图库备注，永远不要念出来，也不要说“这张图里是……”。
 - 别人发的图要真打开看（read_image），看完登记进图库并按 sha256 去重；别凭想象下结论。
 - 不允许以“格式不支持”“后缀不对”“读不了”为由拒图：先跑 `C:\Users\Administrator\tts-venv\Scripts\python.exe C:\Users\Administrator\qq-dsh-bot\img-prep.py <图片路径>` 转成 PNG 再读，动图取第一帧；转换失败才说明情况。
+- 看不懂的表情包（不认识的角色/梗/画面）：先自然回一句（可以吐槽“这啥啊”，但**别装懂、别编角色名**），
+  然后把图记进学习队列：
+  `C:\Program Files\Python312\python.exe C:\Users\Administrator\qq-dsh-bot\kb-queue.py add --hash <图片hash前16位> --image "<图片绝对路径>" --context "<群号，配文30字内>"`
+  这是群聊允许的例外命令（只允许这一条，不许管道、重定向、拼接）。
+  后台每 20 分钟会去查；查到后知识库里就有，不用在群里说“我去查一下”。
+- 已经认识、或 `kb.py search` 能命中的图，不要再记。
 
 # 知识库（好奇心循环）
 

@@ -47,6 +47,17 @@ Register-ScheduledTask -TaskName 'DshBot-Curiosity' -Action $curiosityAction -Tr
   -Settings $curiositySettings -Principal $curiosityPrincipal -Force | Out-Null
 Write-Host 'registered: DshBot-Curiosity (11:00 / 17:00 / 22:00)'
 
+# 表情包补习队列：每 20 分钟处理最多 2 条（队列为空时秒退，不启动 dsh）
+$learnAction = New-ScheduledTaskAction -Execute $ps `
+  -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$bot\run-learn-queue.ps1`""
+$learnTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(2) `
+  -RepetitionInterval (New-TimeSpan -Minutes 20) -RepetitionDuration (New-TimeSpan -Days 3650)
+$learnSettings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+  -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
+Register-ScheduledTask -TaskName 'DshBot-LearnQueue' -Action $learnAction -Trigger $learnTrigger `
+  -Settings $learnSettings -Principal $curiosityPrincipal -Force | Out-Null
+Write-Host 'registered: DshBot-LearnQueue (every 20 min)'
+
 # 开机自检：SYSTEM + AtStartup，不依赖登录；重启后先记一笔各服务状态到 boot.log
 $bootAction = New-ScheduledTaskAction -Execute $ps `
   -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$bot\boot-check.ps1`""

@@ -151,6 +151,24 @@ $py = 'C:\Program Files\Python312\python.exe'
 & $py "$env:USERPROFILE\qq-dsh-bot\kb.py" search 关键词
 ```
 
+### 表情包补习队列
+
+群里发来她看不懂的表情包时，按 `AGENTS.md` 的规则：先自然回一句（不装懂、不编角色名），
+再用一条命令记进队列：
+
+```powershell
+& $py "$env:USERPROFILE\qq-dsh-bot\kb-queue.py" add --hash <sha前16> --image "<图片路径>" --context "群号 配文"
+```
+
+后台任务 `DshBot-LearnQueue`（每 20 分钟）取 pending 项：`read_image` 看图 → `web_search`
+查角色/梗 → 写笔记 → `kb.py add` → 自动同步仓库。每轮最多 2 条；队列为空时秒退，
+不启动 dsh。队列文件 `knowledge\_queue.jsonl` **不参与仓库同步**。
+
+```powershell
+.\deploy\run-learn-queue.ps1 -Max 1          # 手动跑一条
+& $py "$env:USERPROFILE\qq-dsh-bot\kb-queue.py" list --all
+```
+
 约束（写在 `curiosity-prompt.txt`）: 最多抓 3 页、10 分钟内、不碰内网地址、不存个人信息、主题不离开兴趣范围。
 
 ### 同步到独立仓库

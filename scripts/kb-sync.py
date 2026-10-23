@@ -68,7 +68,7 @@ def local_files(root: Path):
             continue
         rel = p.relative_to(root).as_posix()
         name = p.name
-        if name in SKIP_NAMES or name.startswith(".") or rel.startswith("."):
+        if name in SKIP_NAMES or name.startswith(".") or name.startswith("_") or rel.startswith("."):
             continue
         if rel.endswith(SKIP_SUFFIX):
             continue
