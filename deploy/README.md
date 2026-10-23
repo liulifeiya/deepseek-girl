@@ -110,7 +110,24 @@ NapCat 不能自动登录，第一次要扫码：
 
 `DshBot-DSH`、`DshBot-Workers`、`DshBot-Agent`、`DshBot-NapCat`（登录触发）、
 `DshBot-DailyRestart`（每日 05:00）、`DshBot-Monthly`（每 4 周）、
-`DshBot-Proactive-1030/1530/2030`、`DshBot-PersonaBind`（每分钟补绑人设）。
+`DshBot-Proactive-1030/1530/2030`、`DshBot-PersonaBind`（每分钟补绑人设）、
+`DshBot-BootCheck`（SYSTEM / 开机，写 `qq-dsh-bot\boot.log`）。
+
+## 重启自启（重要）
+
+QQ/NapCat 是 GUI 程序，**必须有交互式登录会话**才能跑；只把任务改成开机启动不够。
+完整自启需要两步：
+
+1. **开启自动登录**（自己操作，不经过密码）：
+   `Win+R` → `netplwiz` → 选中 `Administrator` → 取消「要使用本计算机，用户必须输入用户名和密码」→ 应用 → 输入两次密码 → 确定。
+   （服务器版若看不到这个勾选项，改用 `control userpasswords2`，或 Sysinternals Autologon。）
+2. **验证**：`.\deploy\verify-autostart.ps1`
+   检查 `AutoAdminLogon=1`、任务触发器、以及 `boot.log` 里最近一次开机是否记录到后端/QQ。
+
+注意：
+- 自动登录意味着控制台/带外管理（VNC）能直接进入桌面，云服务器请评估这一点。
+- 三个启动脚本（DSH / NapCat / Workers）都是幂等的：自动登录后你再 RDP 登录，不会重复起进程。
+- 想验证真正的重启链路，重启后回来看 `qq-dsh-bot\boot.log` 与 `verify-autostart.ps1` 的输出。
 
 ## 已知差异
 

@@ -1,4 +1,4 @@
-﻿# Register Windows scheduled tasks that replace the systemd user units.
+# Register Windows scheduled tasks that replace the systemd user units.
 # Run once:  powershell -ExecutionPolicy Bypass -File install-tasks.ps1
 $bot = 'C:\Users\Administrator\qq-dsh-bot'
 $ps  = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
@@ -33,5 +33,14 @@ New-Task 'DshBot-PersonaBind' 'patches\bind-private-persona.ps1' $everyMinute
 New-Task 'DshBot-Proactive-1030' 'run-proactive.ps1' (New-ScheduledTaskTrigger -Daily -At 10:30)
 New-Task 'DshBot-Proactive-1530' 'run-proactive.ps1' (New-ScheduledTaskTrigger -Daily -At 15:30)
 New-Task 'DshBot-Proactive-2030' 'run-proactive.ps1' (New-ScheduledTaskTrigger -Daily -At 20:30)
+
+# 开机自检：SYSTEM + AtStartup，不依赖登录；重启后先记一笔各服务状态到 boot.log
+$bootAction = New-ScheduledTaskAction -Execute $ps `
+  -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$bot\boot-check.ps1`""
+$bootSettings = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
+$bootPrincipal = New-ScheduledTaskPrincipal -UserId 'SYSTEM' -LogonType ServiceAccount -RunLevel Highest
+Register-ScheduledTask -TaskName 'DshBot-BootCheck' -Action $bootAction `
+  -Trigger (New-ScheduledTaskTrigger -AtStartup) -Settings $bootSettings -Principal $bootPrincipal -Force | Out-Null
+Write-Host 'registered: DshBot-BootCheck (SYSTEM / AtStartup)'
 
 Get-ScheduledTask -TaskName 'DshBot-*' | Select-Object TaskName, State | Format-Table -AutoSize
