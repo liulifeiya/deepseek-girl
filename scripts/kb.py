@@ -32,15 +32,29 @@ INBOX_LIMIT = 12
 
 DEFAULT_TOPICS = {
     "interests": [
-        {"name": "大模型与 Agent", "weight": 3},
-        {"name": "开源工具", "weight": 2},
-        {"name": "硬件与算力", "weight": 2},
-        {"name": "游戏与二次元", "weight": 1},
-        {"name": "音乐与声音", "weight": 1},
-        {"name": "网络文化与梗", "weight": 1},
+        {"name": "世界地理与风土", "weight": 3, "kind": "world"},
+        {"name": "历史与文明", "weight": 3, "kind": "world"},
+        {"name": "自然科学", "weight": 3, "kind": "world"},
+        {"name": "社会与经济", "weight": 2, "kind": "world"},
+        {"name": "心理与行为", "weight": 2, "kind": "world"},
+        {"name": "艺术与文学", "weight": 2, "kind": "culture"},
+        {"name": "语言与词源", "weight": 2, "kind": "culture"},
+        {"name": "食物与日常", "weight": 2, "kind": "culture"},
+        {"name": "游戏与二次元", "weight": 1, "kind": "culture"},
+        {"name": "音乐与声音", "weight": 1, "kind": "culture"},
+        {"name": "网络文化与梗", "weight": 1, "kind": "culture"},
+        {"name": "科技与 AI", "weight": 2, "kind": "tech"},
     ],
-    "questions": [],
+    "questions": [
+        "不同地方的人怎么过节、为什么",
+        "一个日常物品是怎么被发明出来的",
+        "某个词/说法从哪来",
+        "一个城市为什么长成现在这样",
+        "动物/植物有什么反常识的生存策略",
+        "一道菜背后的人口迁徙",
+    ],
     "lastTopic": "",
+    "lastKind": "",
 }
 
 
@@ -111,12 +125,12 @@ def cmd_topics(_args):
     print("interests:")
     for item in t.get("interests", []):
         name = item.get("name", "?")
-        print(f"  - {name} (weight {item.get('weight', 1)}, covered {counts.get(name, 0)})")
+        print(f"  - [{item.get('kind', '?')}] {name} (weight {item.get('weight', 1)}, covered {counts.get(name, 0)})")
     if t.get("questions"):
         print("open questions:")
         for q in t["questions"][:10]:
             print("  -", q)
-    print("lastTopic:", t.get("lastTopic") or "(none)")
+    print("lastTopic:", t.get("lastTopic") or "(none)", "| lastKind:", t.get("lastKind") or "(none)")
 
 
 def cmd_search(args):
@@ -188,6 +202,9 @@ def cmd_add(args):
 
     t = load_topics()
     t["lastTopic"] = tags[0] if tags else title
+    # 记录大类，供下一轮避免连续科技
+    kinds = {i.get("name"): i.get("kind", "") for i in t.get("interests", [])}
+    t["lastKind"] = kinds.get(t["lastTopic"], "")
     TOPICS.write_text(json.dumps(t, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     regenerate_inbox()
     print(f"NEW {note_path}")

@@ -127,6 +127,17 @@ NapCat 不能自动登录，第一次要扫码：
 | `topics.json` | 兴趣清单与覆盖统计（决定下次查什么） |
 | `curiosity.log` | 每轮运行日志 |
 
+**兴趣范围是「世界」，不是科技圈**。清单见 `config/knowledge-topics.json`，
+分成三类（`world` / `culture` / `tech`），科技只占一块：
+
+- world：世界地理与风土、历史与文明、自然科学、社会与经济、心理与行为
+- culture：艺术与文学、语言与词源、食物与日常、游戏与二次元、音乐与声音、网络文化与梗
+- tech：科技与 AI
+
+选题规则：上一轮是 `tech` 就必须换 `world`/`culture`；其余按覆盖度最少来；
+来源允许百科、主流媒体、大学/博物馆/政府公开资料、纪录片文字稿、书评书摘，
+不再只盯官方博客和 GitHub。政治立场、宗教争端、地域黑这类题目直接跳过。
+
 运行链路：任务 `DshBot-Curiosity` → `run-curiosity.ps1` → `dsh headless`（headless profile）
 → `web_search` + `web_fetch` → `kb.py add`（按 URL 去重）→ 更新 INBOX。
 
