@@ -120,13 +120,22 @@ QQ/NapCat 是 GUI 程序，**必须有交互式登录会话**才能跑；只把�
 
 1. **开启自动登录**（自己操作，不经过密码）：
    `Win+R` → `netplwiz` → 选中 `Administrator` → 取消「要使用本计算机，用户必须输入用户名和密码」→ 应用 → 输入两次密码 → 确定。
-   （服务器版若看不到这个勾选项，改用 `control userpasswords2`，或 Sysinternals Autologon。）
+   **Windows Server 2025 上这个勾选框常常被隐藏**（实测如此），改用 Sysinternals Autologon：
+   ```powershell
+   # 下载并校验签名
+   curl.exe -sSL -o "$env:TEMP\AutoLogon.zip" https://download.sysinternals.com/files/AutoLogon.zip
+   Expand-Archive "$env:TEMP\AutoLogon.zip" "$env:USERPROFILE\Downloads\autologon" -Force
+   Get-AuthenticodeSignature "$env:USERPROFILE\Downloads\autologon\Autologon64.exe"   # 应为 Valid / Microsoft
+   # 运行后填 Administrator + 本机名 + 密码，点 Enable
+   ```
+   Autologon 把凭据加密存进 LSA（注册表不会出现明文 `DefaultPassword`）。
 2. **验证**：`.\deploy\verify-autostart.ps1`
    检查 `AutoAdminLogon=1`、任务触发器、以及 `boot.log` 里最近一次开机是否记录到后端/QQ。
 
 注意：
 - 自动登录意味着控制台/带外管理（VNC）能直接进入桌面，云服务器请评估这一点。
 - 三个启动脚本（DSH / NapCat / Workers）都是幂等的：自动登录后你再 RDP 登录，不会重复起进程。
+- 本仓库不管 DSH Web GUI（3080）的自启；重启后要聊天的界面需要你自己 `dsh web` 或另加计划任务。
 - 想验证真正的重启链路，重启后回来看 `qq-dsh-bot\boot.log` 与 `verify-autostart.ps1` 的输出。
 
 ## 已知差异
