@@ -142,6 +142,23 @@ $py = 'C:\Program Files\Python312\python.exe'
 
 约束（写在 `curiosity-prompt.txt`）: 最多抓 3 页、10 分钟内、不碰内网地址、不存个人信息、主题不离开兴趣范围。
 
+### 同步到独立仓库
+
+知识库会同步到 **[liulifeiya/deepseek-girl-knowledge](https://github.com/liulifeiya/deepseek-girl-knowledge)**（私有）。
+每轮好奇心结束自动调用 `sync-knowledge.ps1`；也可以手动：
+
+```powershell
+.\deploy\sync-knowledge.ps1              # 增量同步（按内容哈希，无变化时不提交）
+.\deploy\sync-knowledge.ps1 -DryRun      # 只看差异
+.\deploy\sync-knowledge.ps1 -Message "knowledge: 手动补一条"
+```
+
+Token 存在 `%USERPROFILE%\.dsh-qq\kb-sync.env`（`KB_SYNC_TOKEN=`，已用 `icacls` 限权）。
+建议换成**只对该仓库有 Contents: Read/Write** 的细粒度令牌，不要长期使用全权限经典令牌。
+
+同步范围：`index.jsonl`、`notes/*.md`、`INBOX.md`、`topics.json`、`README.md`；
+跳过 `curiosity.log`、`_draft.md`、隐藏文件与临时文件。
+
 ## 重启自启（重要）
 
 QQ/NapCat 是 GUI 程序，**必须有交互式登录会话**才能跑；只把任务改成开机启动不够。

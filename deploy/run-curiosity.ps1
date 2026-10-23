@@ -7,7 +7,7 @@
 # 提示词通过 cmd 的 stdin 重定向传入（PowerShell 管道 + 多行文本会被垫片吞掉）。
 # 日志：knowledge\curiosity.log
 
-param([switch]$DryRun)
+param([switch]$DryRun, [switch]$NoSync)
 
 $ErrorActionPreference = 'Stop'
 $home_ = $env:USERPROFILE
@@ -46,4 +46,19 @@ try {
   Pop-Location
 }
 Add-Content -Path $log -Value "----- exit=$code -----" -Encoding utf8
+
+# 学完就同步到独立的知识库仓库（失败不影响本轮结果）
+if ($code -eq 0 -and -not $NoSync) {
+  $sync = Join-Path $bot 'sync-knowledge.ps1'
+  if (Test-Path $sync) {
+    $learned = (Select-String -Path $log -Pattern '^LEARNED ' | Select-Object -Last 1).Line
+    $msg = if ($learned) { 'knowledge: ' + $learned } else { '' }
+    try {
+      & powershell -NoProfile -ExecutionPolicy Bypass -File $sync -Message $msg *>> $log
+    } catch {
+      Add-Content -Path $log -Value "sync failed: $($_.Exception.Message)" -Encoding utf8
+    }
+  }
+}
+
 exit $code
