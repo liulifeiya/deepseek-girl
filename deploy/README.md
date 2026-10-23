@@ -112,7 +112,35 @@ NapCat 不能自动登录，第一次要扫码：
 `DshBot-Web`（登录触发，DSH Web GUI 3080）、
 `DshBot-DailyRestart`（每日 05:00）、`DshBot-Monthly`（每 4 周）、
 `DshBot-Proactive-1030/1530/2030`、`DshBot-PersonaBind`（每分钟补绑人设）、
+`DshBot-Curiosity`（每日 11:00 / 17:00 / 22:00，自主查资料写知识库）、
 `DshBot-BootCheck`（SYSTEM / 开机，写 `qq-dsh-bot\boot.log`）。
+
+## 自主好奇心知识库
+
+机器人会按计划自己去网上找资料，写进 `%USERPROFILE%\knowledge\`：
+
+| 文件 | 作用 |
+|---|---|
+| `index.jsonl` | 每条来源一行（url / title / tags / summary / note / sha / 时间） |
+| `notes/*.md` | 每篇笔记（结论 + 要点 + 待验证 + 来源） |
+| `INBOX.md` | 最近 12 条摘要，聊天时可直接引用 |
+| `topics.json` | 兴趣清单与覆盖统计（决定下次查什么） |
+| `curiosity.log` | 每轮运行日志 |
+
+运行链路：任务 `DshBot-Curiosity` → `run-curiosity.ps1` → `dsh headless`（headless profile）
+→ `web_search` + `web_fetch` → `kb.py add`（按 URL 去重）→ 更新 INBOX。
+
+维护：
+
+```powershell
+$py = 'C:\Program Files\Python312\python.exe'
+& $py "$env:USERPROFILE\qq-dsh-bot\kb.py" stats      # 条数 / 体积 / 最后一条
+& $py "$env:USERPROFILE\qq-dsh-bot\kb.py" topics     # 兴趣与覆盖度
+& $py "$env:USERPROFILE\qq-dsh-bot\kb.py" inbox      # 最近 12 条
+& $py "$env:USERPROFILE\qq-dsh-bot\kb.py" search 关键词
+```
+
+约束（写在 `curiosity-prompt.txt`）: 最多抓 3 页、10 分钟内、不碰内网地址、不存个人信息、主题不离开兴趣范围。
 
 ## 重启自启（重要）
 

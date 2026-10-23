@@ -36,6 +36,17 @@ New-Task 'DshBot-Proactive-1030' 'run-proactive.ps1' (New-ScheduledTaskTrigger -
 New-Task 'DshBot-Proactive-1530' 'run-proactive.ps1' (New-ScheduledTaskTrigger -Daily -At 15:30)
 New-Task 'DshBot-Proactive-2030' 'run-proactive.ps1' (New-ScheduledTaskTrigger -Daily -At 20:30)
 
+# 好奇心循环：每天 11:00 / 17:00 / 22:00 上网查资料并写进 knowledge\
+$curiosityAction = New-ScheduledTaskAction -Execute $ps `
+  -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$bot\run-curiosity.ps1`""
+$curiosityTriggers = @('11:00', '17:00', '22:00') | ForEach-Object { New-ScheduledTaskTrigger -Daily -At $_ }
+$curiositySettings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+  -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Hours 1)
+$curiosityPrincipal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
+Register-ScheduledTask -TaskName 'DshBot-Curiosity' -Action $curiosityAction -Trigger $curiosityTriggers `
+  -Settings $curiositySettings -Principal $curiosityPrincipal -Force | Out-Null
+Write-Host 'registered: DshBot-Curiosity (11:00 / 17:00 / 22:00)'
+
 # 开机自检：SYSTEM + AtStartup，不依赖登录；重启后先记一笔各服务状态到 boot.log
 $bootAction = New-ScheduledTaskAction -Execute $ps `
   -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$bot\boot-check.ps1`""

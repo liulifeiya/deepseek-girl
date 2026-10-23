@@ -187,6 +187,29 @@ if ($DryRun) {
   # v2：回收站 / 容量上限 / 机器人本地归档名单
   & $py (Join-Path $Repo 'patches\patch-archive-retention-2.py')
   if ($LASTEXITCODE -ne 0) { throw 'patch-archive-retention-2.py failed' }
+
+  # headless profile：好奇心循环要能执行命令/写文件（workspace 是家目录时 workspace-write 会报错）
+  $headlessDir = Join-Path $DshHome 'profiles\headless'
+  New-Item -ItemType Directory -Force -Path $headlessDir | Out-Null
+  $headlessPatch = @'
+- id: permission
+  name: "@deepseek-ai/dsh-permission-presets"
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+    defaultPreset: danger-full-access
+'@
+  if (-not (Test-Path (Join-Path $headlessDir 'cordis.patch.yml'))) {
+    [System.IO.File]::WriteAllText((Join-Path $headlessDir 'cordis.patch.yml'), $headlessPatch, [System.Text.UTF8Encoding]::new($false))
+  }
 }
 
 # ---------------------------------------------------------------- 40-botfiles

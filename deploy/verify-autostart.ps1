@@ -1,4 +1,4 @@
-# deploy/verify-autostart.ps1 — 检查「重启后是否无需人工登录即可自启」
+﻿# deploy/verify-autostart.ps1 — 检查「重启后是否无需人工登录即可自启」
 #
 #   .\deploy\verify-autostart.ps1
 #
