@@ -148,6 +148,8 @@ $py = 'C:\Program Files\Python312\python.exe'
 & $py "$env:USERPROFILE\qq-dsh-bot\kb.py" topics     # 兴趣与覆盖度
 & $py "$env:USERPROFILE\qq-dsh-bot\kb.py" inbox      # 最近 12 条
 & $py "$env:USERPROFILE\qq-dsh-bot\kb.py" search 关键词
+& $py "$env:USERPROFILE\qq-dsh-bot\kb.py" rm --title-contains 关键词   # 删除（含笔记文件）
+& $py "$env:USERPROFILE\qq-dsh-bot\kb.py" rm --url <URL>
 ```
 
 ### 表情包补习队列

@@ -207,6 +207,42 @@ def cmd_add(args):
     return 0
 
 
+def cmd_rm(args):
+    data = rows()
+    keep = []
+    removed = []
+    for row in data:
+        hit = False
+        if args.url and row.get("url") == args.url:
+            hit = True
+        if args.title_contains and args.title_contains in (row.get("title") or ""):
+            hit = True
+        if hit:
+            note = row.get("note")
+            if note:
+                Path(note).unlink(missing_ok=True)
+            removed.append(row.get("title", ""))
+        else:
+            keep.append(row)
+
+    if not removed:
+        print("no match")
+        return 1
+
+    INDEX.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in keep), encoding="utf-8")
+    t = load_topics()
+    if t.get("lastTopic") and not any(r.get("tags", [None])[0] == t["lastTopic"] for r in keep):
+        t["lastTopic"] = (keep[-1].get("tags") or [""])[0] if keep else ""
+        kinds = {i.get("name"): i.get("kind", "") for i in t.get("interests", [])}
+        t["lastKind"] = kinds.get(t["lastTopic"], "")
+        TOPICS.write_text(json.dumps(t, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    regenerate_inbox()
+    for title in removed:
+        print("REMOVED", title)
+    print(f"remaining={len(keep)}")
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -221,6 +257,10 @@ def main():
     p.add_argument("--summary", default="")
     p.add_argument("--body-file", default="")
     p.set_defaults(fn=cmd_add)
+    p = sub.add_parser("rm")
+    p.add_argument("--url", default="")
+    p.add_argument("--title-contains", default="")
+    p.set_defaults(fn=cmd_rm)
     args = ap.parse_args()
     ensure()
     sys.exit(args.fn(args) or 0)
