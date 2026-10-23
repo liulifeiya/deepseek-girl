@@ -54,7 +54,9 @@ if ($code -eq 0 -and -not $NoSync) {
     $learned = (Select-String -Path $log -Pattern '^LEARNED ' | Select-Object -Last 1).Line
     $msg = if ($learned) { 'knowledge: ' + $learned } else { '' }
     try {
-      & powershell -NoProfile -ExecutionPolicy Bypass -File $sync -Message $msg *>> $log
+      # 注意：PS 5.1 的 *>> 会写成 UTF-16，这里先收成字符串再按 UTF-8 追加
+      $syncOut = & powershell -NoProfile -ExecutionPolicy Bypass -File $sync -Message $msg 2>&1 | Out-String
+      Add-Content -Path $log -Value $syncOut -Encoding utf8
     } catch {
       Add-Content -Path $log -Value "sync failed: $($_.Exception.Message)" -Encoding utf8
     }
