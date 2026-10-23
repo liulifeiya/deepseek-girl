@@ -129,12 +129,35 @@ if ($DryRun) {
     workspacePath: '$BotHome'
     logLevel: info
     interimMessages: false
+# Windows 上 workspace 是整个家目录时，ACL 沙箱的临时目录会落在 workspace 里，
+# 报 "Windows ACL temp root must be outside the workspace"，导致所有 shell 调用失败。
+# 机器人要跑 tts-out / qq-dsh-bot 下的固定脚本，这里用 danger-full-access。
+- id: permission
+  name: "@deepseek-ai/dsh-permission-presets"
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+    defaultPreset: danger-full-access
 "@
   [System.IO.File]::WriteAllText((Join-Path $Profile 'cordis.patch.yml'), $yml, [System.Text.UTF8Encoding]::new($false))
   New-Item -ItemType Directory -Force -Path $BotDir | Out-Null
   [System.IO.File]::WriteAllText((Join-Path $BotDir 'onebot-token.txt'), "$OneBotToken`n", [System.Text.UTF8Encoding]::new($false))
   $lib = Join-Path $Profile 'node_modules\dsh-onebot-qq\lib'
-  Run $py @((Join-Path $Repo 'patches\apply-onebot-patches.py'), $lib)
+  # Windows 上杀软/索引器偶尔会短暂锁住刚解压的文件（写时报 Errno 22），重试即可
+  $patched = $false
+  for ($i = 1; $i -le 3 -and -not $patched; $i++) {
+    & $py (Join-Path $Repo 'patches\apply-onebot-patches.py') $lib
+    if ($LASTEXITCODE -eq 0) { $patched = $true } else { Start-Sleep -Seconds 3 }
+  }
+  if (-not $patched) { throw 'apply-onebot-patches.py failed after 3 attempts' }
 }
 
 # ---------------------------------------------------------------- 40-botfiles

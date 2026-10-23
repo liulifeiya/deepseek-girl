@@ -299,17 +299,6 @@ def patch_mention_context(lib):
           "                // 纯旁路\n"
           "            }\n"
           "        }\n")
-    apply('inbound.js', gw,
-          gw + "        // LOCAL PATCH (mention-context): 所有群消息进上下文缓冲，@ 时才取用\n"
-          "        if (kind === 'group') {\n"
-          "            try {\n"
-          "                recordGroupMessage(inbound);\n"
-          "            }\n"
-          "            catch {\n"
-          "                // 纯旁路\n"
-          "            }\n"
-          "        }\n")
-
     final = ("        let final = wrapUserMessage(content, userId, nickname);\n"
              "        if (kind === 'group') {\n"
              "            final = buildGroupMessagePrefix(nickname, userId, mentioned) + final;\n")
@@ -481,3 +470,64 @@ def patch_stt_windows(lib):
     print('stt.js: windows path patch applied')
 
 patch_stt_windows(lib)
+
+def patch_persona_api(lib):
+    """commands.js: /persona 的 API 端口写死 3080，改成可用 BOT_DSH_API 覆盖（默认 3081）。"""
+    path = os.path.join(lib, 'commands.js')
+    if not os.path.exists(path):
+        print('WARN: commands.js missing, skip persona api patch')
+        return
+    with open(path, encoding='utf-8') as f:
+        text = f.read()
+    old = "const PERSONA_API_BASE = 'http://127.0.0.1:3080/api/dsh-persona-dafeiyu';"
+    new = ("// LOCAL PATCH (persona-api): 机器人后端端口可通过 BOT_DSH_API 覆盖\n"
+           "const PERSONA_API_BASE = (process.env.BOT_DSH_API ?? 'http://127.0.0.1:3081')"
+           " + '/api/dsh-persona-dafeiyu';")
+    if new.splitlines()[-1] in text:
+        print('commands.js: persona api patch already applied')
+        return
+    if old not in text:
+        print('WARN: persona api anchor missing in commands.js')
+        return
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(text.replace(old, new, 1))
+    print('commands.js: persona api patch applied')
+
+
+patch_persona_api(lib)
+
+def patch_mention_record(lib):
+    """inbound.js: 把每条群消息写进 mention-context 缓冲（@ 时才有前文）。"""
+    path = os.path.join(lib, 'inbound.js')
+    if not os.path.exists(path):
+        print('WARN: inbound.js missing, skip mention-record patch')
+        return
+    with open(path, encoding='utf-8') as f:
+        text = f.read()
+    marker = 'LOCAL PATCH (mention-context): 所有群消息进上下文缓冲'
+    if marker in text:
+        print('inbound.js: mention-record patch already applied')
+        return
+    anchor = ("        if (kind === 'group') {\n"
+              "            try {\n"
+              "                groupWake.note(this.ctx, { ...inbound, mentioned });\n"
+              "            }\n"
+              "            catch {\n"
+              "            }\n"
+              "        }\n")
+    if anchor not in text:
+        print('WARN: group-wake anchor missing in inbound.js')
+        return
+    block = ("        // LOCAL PATCH (mention-context): 所有群消息进上下文缓冲，@ 时才取用\n"
+             "        if (kind === 'group') {\n"
+             "            try {\n"
+             "                recordGroupMessage(inbound);\n"
+             "            }\n"
+             "            catch {\n"
+             "            }\n"
+             "        }\n")
+    open(path, 'w', encoding='utf-8').write(text.replace(anchor, anchor + block, 1))
+    print('inbound.js: mention-record patch applied')
+
+
+patch_mention_record(lib)

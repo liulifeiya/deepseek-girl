@@ -18,3 +18,6 @@ if (Test-Path $py) { $env:BOT_PYTHON = $py }
 
 $env:NAPCAT_RESTART_CMD = 'C:\Windows\System32\cmd.exe /c C:\Users\Administrator\qq-dsh-bot\restart-napcat.cmd'
 $env:NAPCAT_QR_PNG      = 'C:\Users\Administrator\Napcat\cache\qrcode.png'
+
+# The bot backend port for in-plugin API calls (/persona)
+$env:BOT_DSH_API = 'http://127.0.0.1:3081'
