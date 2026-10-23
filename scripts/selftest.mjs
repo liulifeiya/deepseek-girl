@@ -70,8 +70,42 @@ try {
 } catch (e) { fail('image-hash', e.message); }
 
 try {
+  const cfgPath = path.join(HOME, 'qq-dsh-bot', 'group-wake-selftest.json');
+  // 必须在 import 之前设置：模块在加载时就算好了 CONFIG_PATH
+  process.env.GROUP_WAKE_CONFIG = cfgPath;
   const m = await imp('group-wake.js');
-  check('group-wake', typeof m.groupWake === 'object' && typeof m.attachGroupWake === 'function', Object.keys(m).join(','));
+
+  async function wakeCase(cfg, notes, hour) {
+    fs.writeFileSync(cfgPath, JSON.stringify(cfg));
+    const gw = new m.GroupWake();
+    let dispatched = 0;
+    const ctx = { log: () => { }, getChat: () => undefined, dispatchFollowup: async () => { dispatched++; } };
+    for (const n of notes) {
+      gw.note(ctx, { kind: 'group', chatId: 'selftest', userId: '1', nickname: 'n', text: n, media: [] });
+    }
+    // 抽签是随机的：固定成 0 让“该醒”的用例确定命中
+    const origRandom = Math.random;
+    Math.random = () => 0;
+    try {
+      gw.tick(new Date(2026, 9, 24, hour, 0, 0).getTime());
+      await new Promise((r) => setTimeout(r, 40));
+    } finally {
+      Math.random = origRandom;
+    }
+    return dispatched;
+  }
+
+  const base = {
+    enabled: true, idleMs: 0, cooldownMs: 0, minMessages: 1,
+    fallbackProb: 1, maxTurnsPerHour: 10, quietStart: '00:00', quietEnd: '00:00', keywords: [],
+  };
+  const hit = await wakeCase(base, ['在吗'], 12);
+  const few = await wakeCase({ ...base, minMessages: 3 }, ['在吗'], 12);
+  const quiet = await wakeCase({ ...base, quietStart: '00:00', quietEnd: '23:59' }, ['在吗'], 12);
+  const off = await wakeCase({ ...base, enabled: false }, ['在吗'], 12);
+  fs.unlinkSync(cfgPath);
+  check('group-wake', hit === 1 && few === 0 && quiet === 0 && off === 0,
+    `命中=${hit} 不足阈值=${few} 静默时段=${quiet} 已关闭=${off}`);
 } catch (e) { fail('group-wake', e.message); }
 
 // ---- HTTP 接口 ----

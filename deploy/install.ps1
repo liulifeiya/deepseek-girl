@@ -129,6 +129,28 @@ if ($DryRun) {
     workspacePath: '$BotHome'
     logLevel: info
     interimMessages: false
+# openwolf 默认会把解剖表注入 AGENTS.md（家目录扫出 20KB 无用路径，每轮烧 token），
+# 关掉注入并排除无关大目录。
+- id: openwolf
+  name: dsh-openwolf
+  config:
+    injectAgentsMd: false
+    ignore:
+      - node_modules
+      - .git
+      - AppData
+      - Documents
+      - Downloads
+      - Desktop
+      - Napcat
+      - tts-venv
+      - .dsh
+      - .dsh-qq
+      - .dshwolf
+      - agent/projects
+      - agent/work
+      - agent/logs
+      - "*.log"
 # Windows 上 workspace 是整个家目录时，ACL 沙箱的临时目录会落在 workspace 里，
 # 报 "Windows ACL temp root must be outside the workspace"，导致所有 shell 调用失败。
 # 机器人要跑 tts-out / qq-dsh-bot 下的固定脚本，这里用 danger-full-access。
