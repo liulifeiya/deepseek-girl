@@ -1,6 +1,7 @@
 // QQ 保活守卫
 // 1) 每 30s 探一次在线状态，每 4min 发一次在线心跳
-// 2) 连续 3 次探不到 -> 自动 systemctl --user restart napcat.service
+// 2) 连续 3 次探不到 -> 执行 NAPCAT_RESTART_CMD 重启 NapCat
+//    （Windows 由 deploy/env.ps1 注入 restart-napcat.cmd）
 // 3) 重启后仍不恢复 -> 按 5/10/20 分钟退避重试；30 分钟内满 3 次就停手
 //    （这种情况通常要人工扫码，守卫不生成/不搬二维码，只等）
 // 4) 恢复后给管理员发一条消息（23:00-08:00 静默，只记日志）
@@ -178,16 +179,17 @@ async function tryRecover() {
 
   lastRestart = now;
   restartTimes.push(now);
-  log(`RESTART 第 ${restartTimes.length} 次重启 napcat.service（已掉线 ${downSec}s）`);
+  log(`RESTART 第 ${restartTimes.length} 次重启 NapCat（已掉线 ${downSec}s）`);
   try {
     const restartCmd = process.env.NAPCAT_RESTART_CMD;
     if (restartCmd) {
-      // Windows 移植：由 NAPCAT_RESTART_CMD 指定重启命令（默认 systemd）
+      // 由 NAPCAT_RESTART_CMD 指定重启命令（env.ps1 注入 restart-napcat.cmd）
       const parts = restartCmd.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
       const [cmd, ...args] = parts.map((p) => p.replace(/^"|"$/g, ''));
       await execFileP(cmd, args, { timeout: 90_000 });
     } else {
-      await execFileP('systemctl', ['--user', 'restart', 'napcat.service'], { timeout: 45_000 });
+      // Windows 部署必须配置 NAPCAT_RESTART_CMD（deploy/env.ps1 会注入）
+      throw new Error('NAPCAT_RESTART_CMD 未配置，无法自动重启 NapCat');
     }
     log('RESTART 命令已执行，等待恢复');
   } catch (e) {

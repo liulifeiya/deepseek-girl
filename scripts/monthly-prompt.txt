@@ -1,4 +1,4 @@
-读取 /home/ubuntu/.dshwolf/cerebrum.md、/home/ubuntu/.dshwolf/memory.md、/home/ubuntu/.dshwolf/STATUS.md 和 /home/ubuntu/AGENTS.md。
+读取 C:\Users\Administrator\.dshwolf\cerebrum.md、C:\Users\Administrator\.dshwolf\memory.md、C:\Users\Administrator\.dshwolf\STATUS.md 和 C:\Users\Administrator\AGENTS.md。
 合并重复条目，移除已过时的规则，把仍然有效的用户偏好和回复纪律整理成精简的长期记忆。
 不要删除原始文件，只更新这几个文件中的长期记忆内容。
 只输出完成摘要。
