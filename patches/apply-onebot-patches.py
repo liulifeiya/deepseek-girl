@@ -497,70 +497,117 @@ def patch_persona_api(lib):
 patch_persona_api(lib)
 
 def patch_mention_record(lib):
-    """inbound.js: 群消息进 mention-context 缓冲；带图时后台解析成本地路径。"""
+    """inbound.js: 群消息进上下文缓冲；图片解析成本地路径并自动入库（sha256 去重）。"""
     path = os.path.join(lib, 'inbound.js')
     if not os.path.exists(path):
         print('WARN: inbound.js missing, skip mention-record patch')
         return
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    src_hash = os.path.join(here, 'image-hash.js')
+    if os.path.exists(src_hash):
+        with open(src_hash, encoding='utf-8') as f:
+            body = f.read()
+        with open(os.path.join(lib, 'image-hash.js'), 'w', encoding='utf-8') as f:
+            f.write(body)
+        print('image-hash.js: copied')
+
     with open(path, encoding='utf-8') as f:
         text = f.read()
 
-    marker_v2 = 'LOCAL PATCH (mention-context-v2)'
-    if marker_v2 in text:
-        print('inbound.js: mention-record patch already applied')
+    if 'LOCAL PATCH (mention-context-v3)' in text:
+        print('inbound.js: mention-record patch already applied (v3)')
         return
 
-    block = (
-        "        // LOCAL PATCH (mention-context-v2): 群消息进上下文缓冲，图片后台解析成路径\n"
-        "        if (kind === 'group') {\n"
-        "            try {\n"
-        "                recordGroupMessage(inbound, async () => {\n"
-        "                    const annotations = [];\n"
-        "                    for (const ref of inbound.media) {\n"
-        "                        try {\n"
-        "                            const annotation = await this.resolveMediaRef(ref, chatId);\n"
-        "                            if (annotation !== '')\n"
-        "                                annotations.push(annotation);\n"
-        "                        }\n"
-        "                        catch {\n"
-        "                        }\n"
-        "                    }\n"
-        "                    return annotations;\n"
-        "                });\n"
-        "            }\n"
-        "            catch {\n"
-        "            }\n"
-        "        }\n")
+    def block_of(indent, head_line, body_lines, tail_lines):
+        lines = [' ' * indent + head_line]
+        for item in body_lines:
+            lines.append(' ' * indent + item)
+        for item in tail_lines:
+            lines.append(' ' * indent + item)
+        return '\n'.join(lines) + '\n'
 
-    # v1 注入块（没有媒体解析）→ 原地替换
-    v1 = (
-        "        // LOCAL PATCH (mention-context): 所有群消息进上下文缓冲，@ 时才取用\n"
-        "        if (kind === 'group') {\n"
-        "            try {\n"
-        "                recordGroupMessage(inbound);\n"
-        "            }\n"
-        "            catch {\n"
-        "            }\n"
-        "        }\n")
-    if v1 in text:
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(text.replace(v1, block, 1))
-        print('inbound.js: mention-record upgraded to v2 (media aware)')
-        return
+    v3_lines = [
+        "// LOCAL PATCH (mention-context-v3): 群消息进上下文缓冲，图片解析成路径并自动入库",
+        "if (kind === 'group') {",
+        "    try {",
+        "        recordGroupMessage(inbound, async () => {",
+        "            const annotations = [];",
+        "            for (const ref of inbound.media) {",
+        "                try {",
+        "                    const annotation = await this.resolveMediaRef(ref, chatId);",
+        "                    if (annotation === '')",
+        "                        continue;",
+        "                    const hit = /\\[图片:([^\\]]+)\\]/.exec(annotation);",
+        "                    const info = hit === null ? undefined : ingestImage(hit[1].trim());",
+        "                    annotations.push(info === undefined",
+        "                        ? annotation",
+        "                        : annotation + ' #' + info.short + (info.dup ? ' (图库已有)' : ' (新入库)'));",
+        "                }",
+        "                catch {",
+        "                }",
+        "            }",
+        "            return annotations;",
+        "        });",
+        "    }",
+        "    catch {",
+        "    }",
+        "}",
+    ]
+    block = ''.join('        ' + line + '\n' for line in v3_lines)
 
-    anchor = ("        if (kind === 'group') {\n"
-              "            try {\n"
-              "                groupWake.note(this.ctx, { ...inbound, mentioned });\n"
-              "            }\n"
-              "            catch {\n"
-              "            }\n"
-              "        }\n")
-    if anchor not in text:
+    anchors = []
+    anchors.append([
+        "// LOCAL PATCH (mention-context-v2): 群消息进上下文缓冲，图片后台解析成路径",
+        "if (kind === 'group') {", "    try {",
+        "        recordGroupMessage(inbound, async () => {",
+        "            const annotations = [];",
+        "            for (const ref of inbound.media) {", "                try {",
+        "                    const annotation = await this.resolveMediaRef(ref, chatId);",
+        "                    if (annotation !== '')",
+        "                        annotations.push(annotation);", "                }",
+        "                catch {", "                }", "            }",
+        "            return annotations;", "        });", "    }", "    catch {", "    }", "}",
+    ])
+    anchors.append([
+        "// LOCAL PATCH (mention-context): 所有群消息进上下文缓冲，@ 时才取用",
+        "if (kind === 'group') {", "    try {",
+        "        recordGroupMessage(inbound);", "    }", "    catch {", "    }", "}",
+    ])
+
+    changed = False
+    for lines in anchors:
+        old = ''.join('        ' + line + '\n' for line in lines)
+        if old in text:
+            text = text.replace(old, block, 1)
+            changed = True
+            break
+
+    if not changed:
+        anchor = ''.join('        ' + line + '\n' for line in [
+            "if (kind === 'group') {", "    try {",
+            "        groupWake.note(this.ctx, { ...inbound, mentioned });",
+            "    }", "    catch {", "    }", "}",
+        ])
+        if anchor in text:
+            text = text.replace(anchor, anchor + block, 1)
+            changed = True
+
+    if not changed:
         print('WARN: group-wake anchor missing in inbound.js')
         return
+
+    if "from './image-hash.js'" not in text:
+        imp = "import { ingestImage } from './image-hash.js';\n"
+        marker = "import { buildMentionContext, recordGroupMessage } from './mention-context.js';\n"
+        if marker in text:
+            text = text.replace(marker, marker + imp, 1)
+        else:
+            text = imp + text
+
     with open(path, 'w', encoding='utf-8') as f:
-        f.write(text.replace(anchor, anchor + block, 1))
-    print('inbound.js: mention-record patch applied (v2, media aware)')
+        f.write(text)
+    print('inbound.js: mention-record patch applied (v3, media + image hash)')
 
 
 patch_mention_record(lib)
