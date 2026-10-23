@@ -23,6 +23,9 @@ $EDITOR deploy/deploy.conf          # 填 BOT_QQ / ADMIN_QQ / ONEBOT_TOKEN / DEE
 
 从老机器搬家看 **[docs/MIGRATION.md](docs/MIGRATION.md)**：导出 → 新机器装环境 → 导入 → 扫码 → 验收。
 
+Windows（Server 2022/2025、Win10+）没有 systemd，用 PowerShell + 计划任务部署，
+见 **[docs/WINDOWS.md](docs/WINDOWS.md)** 和 **[deploy/windows/](deploy/windows/)**。
+
 ## 目录
 
 | 路径 | 内容 |

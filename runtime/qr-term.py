@@ -1,18 +1,29 @@
 #!/usr/bin/env python3
 """把 NapCat 的 qrcode.png 打成终端二维码（半块字符，白底黑块）。
 
-用法: ~/tts-venv/bin/python ~/qq-dsh-bot/qr-term.py [png路径]
-默认读 NapCat 的登录二维码缓存。直接在 SSH 终端里扫即可。
+用法: <venv>/python qr-term.py [png路径]
+
+默认读 NapCat 的登录二维码缓存，路径按平台自动判断：
+  Windows: %BOT_HOME%\\Napcat\\cache\\qrcode.png
+  Linux  : $BOT_HOME/Napcat/opt/QQ/resources/app/app_launcher/napcat/cache/qrcode.png
+也可以用 NAPCAT_QR_PNG 直接指定。
 """
 import os
 import sys
 from math import gcd
+
 from PIL import Image
 
-HOME = os.environ.get("BOT_HOME", "/home/ubuntu")
-PATH = sys.argv[1] if len(sys.argv) > 1 else (
-    HOME + "/Napcat/opt/QQ/resources/app/app_launcher/napcat/cache/qrcode.png"
-)
+HOME = os.environ.get("BOT_HOME") or os.path.expanduser("~")
+
+_DEFAULT_CANDIDATES = [
+    os.path.join(HOME, "Napcat", "cache", "qrcode.png"),
+    os.path.join(HOME, "Napcat", "opt", "QQ", "resources", "app", "app_launcher", "napcat", "cache", "qrcode.png"),
+]
+
+PATH = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("NAPCAT_QR_PNG")
+if not PATH:
+    PATH = next((p for p in _DEFAULT_CANDIDATES if os.path.exists(p)), _DEFAULT_CANDIDATES[0])
 
 
 def module_size(px, w, h):

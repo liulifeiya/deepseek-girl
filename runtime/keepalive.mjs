@@ -3,7 +3,7 @@
 // 真要改成发消息：KEEPALIVE_MODE=message 启动即可。
 import fs from 'node:fs';
 
-const HOME = process.env.BOT_HOME || '/home/ubuntu';
+const HOME = process.env.BOT_HOME || process.env.USERPROFILE || process.env.HOME || process.cwd();
 const TOKEN = fs.readFileSync(`${HOME}/qq-dsh-bot/onebot-token.txt`, 'utf8').trim();
 const SELF = process.env.BOT_QQ || '2836148023';
 const LOG = `${HOME}/qq-dsh-bot/keepalive.log`;

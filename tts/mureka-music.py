@@ -2,23 +2,29 @@
 """Mureka 音乐生成
 用法：mureka-music.py "<风格prompt>" [输出文件] [歌词文件]
 不给歌词就用 easy-generate（它自己写词，贵约10倍）
+
+跨平台：BOT_HOME（默认用户家目录）+ tts-out/。
 """
 import json
 import os
 import sys
 import time
 import urllib.request
+from pathlib import Path
 
 BASE = "https://api.mureka.ai"
+
+HOME = Path(os.environ.get("BOT_HOME") or Path.home())
+OUT_DIR = Path(os.environ.get("TTS_OUT_DIR") or (HOME / "tts-out"))
 
 
 def load_key():
     k = os.environ.get("MUREKA_API_KEY", "").strip()
     if k:
         return k
-    for p in ("/home/ubuntu/tts-out/mureka-key.txt", "/home/ubuntu/.mureka-key"):
-        if os.path.exists(p):
-            return open(p).read().strip()
+    for p in (OUT_DIR / "mureka-key.txt", HOME / ".mureka-key"):
+        if p.exists():
+            return p.read_text(encoding="utf-8").strip()
     raise SystemExit("no Mureka API key")
 
 
@@ -26,8 +32,8 @@ def call(path, payload=None, method=None):
     url = BASE + path
     data = json.dumps(payload).encode() if payload is not None else None
     req = urllib.request.Request(url, data=data, method=method or ("POST" if data else "GET"),
-                                headers={"Authorization": "Bearer " + load_key(),
-                                         "Content-Type": "application/json"})
+                                 headers={"Authorization": "Bearer " + load_key(),
+                                          "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=120) as r:
         return json.load(r)
 
@@ -47,12 +53,15 @@ def find_audio(obj, out):
 
 def main():
     prompt = sys.argv[1] if len(sys.argv) > 1 else "流行, 轻快, 女声"
-    out = sys.argv[2] if len(sys.argv) > 2 else "/home/ubuntu/tts-out/song.mp3"
+    out = sys.argv[2] if len(sys.argv) > 2 else str(OUT_DIR / "song.mp3")
     lyr_path = sys.argv[3] if len(sys.argv) > 3 else None
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
 
     payload = {"model": "auto", "prompt": prompt, "n": 1}
     if lyr_path and os.path.exists(lyr_path):
-        payload["lyrics"] = open(lyr_path).read()
+        payload["lyrics"] = Path(lyr_path).read_text(encoding="utf-8")
         path = "/v1/song/generate"
     else:
         path = "/v1/song/easy-generate"

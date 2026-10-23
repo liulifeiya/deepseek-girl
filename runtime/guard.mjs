@@ -12,14 +12,14 @@ import { promisify } from 'node:util';
 
 const execFileP = promisify(execFile);
 
-const HOME = process.env.BOT_HOME || '/home/ubuntu';
+const HOME = process.env.BOT_HOME || process.env.USERPROFILE || process.env.HOME || process.cwd();
 const BOT = `${HOME}/qq-dsh-bot`;
 const TOKEN = fs.readFileSync(`${BOT}/onebot-token.txt`, 'utf8').trim();
 const WS_URL = 'ws://127.0.0.1:3001';
 const LOG = `${BOT}/guard.log`;
 const STATE_FILE = `${BOT}/guard-state.json`;
 const PID_FILE = `${BOT}/guard.pid`;
-const QR_SRC = `${HOME}/Napcat/opt/QQ/resources/app/app_launcher/napcat/cache/qrcode.png`;
+const QR_SRC = process.env.NAPCAT_QR_PNG || `${HOME}/Napcat/opt/QQ/resources/app/app_launcher/napcat/cache/qrcode.png`;
 const ADMIN = Number(process.env.ADMIN_QQ || 2812108776);
 
 const TICK = 30_000;              // 探活间隔
@@ -180,7 +180,15 @@ async function tryRecover() {
   restartTimes.push(now);
   log(`RESTART 第 ${restartTimes.length} 次重启 napcat.service（已掉线 ${downSec}s）`);
   try {
-    await execFileP('systemctl', ['--user', 'restart', 'napcat.service'], { timeout: 45_000 });
+    const restartCmd = process.env.NAPCAT_RESTART_CMD;
+    if (restartCmd) {
+      // Windows 移植：由 NAPCAT_RESTART_CMD 指定重启命令（默认 systemd）
+      const parts = restartCmd.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
+      const [cmd, ...args] = parts.map((p) => p.replace(/^"|"$/g, ''));
+      await execFileP(cmd, args, { timeout: 90_000 });
+    } else {
+      await execFileP('systemctl', ['--user', 'restart', 'napcat.service'], { timeout: 45_000 });
+    }
     log('RESTART 命令已执行，等待恢复');
   } catch (e) {
     log(`RESTART 执行失败: ${e.message}`);

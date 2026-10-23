@@ -13,7 +13,10 @@
  */
 import { readFileSync } from 'node:fs';
 
-const CONFIG_PATH = process.env.GROUP_WAKE_CONFIG ?? '/home/ubuntu/.dsh-user/group-wake.json';
+const HOME_DIR = process.env.BOT_HOME || process.env.USERPROFILE || process.env.HOME || process.cwd();
+const DSH_HOME = process.env.DSH_HOME || `${HOME_DIR}/.dsh-user`;
+
+const CONFIG_PATH = process.env.GROUP_WAKE_CONFIG ?? `${DSH_HOME}/group-wake.json`;
 const TICK_MS = 15_000;
 const BUFFER_MAX = 40;
 const HEAT_WINDOW_MS = 5 * 60_000;
@@ -72,7 +75,7 @@ function clockOf(ts) {
 /** 群成员放行名单（非管理员用）：~/.dsh-user/group-user-allow.json
  *  形如 {"allow": ["1126678256", "3525840251"]}
  *  文件不存在或 allow 为空 = 不启用（所有人都按原规则处理）。 */
-const ALLOW_PATH = process.env.GROUP_USER_ALLOW ?? '/home/ubuntu/.dsh-user/group-user-allow.json';
+const ALLOW_PATH = process.env.GROUP_USER_ALLOW ?? `${DSH_HOME}/group-user-allow.json`;
 
 export function readGroupUserAllow(groupId) {
     try {

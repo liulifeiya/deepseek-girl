@@ -1,6 +1,11 @@
 import struct, zlib, sys, time, os
 
-PNG='/home/ubuntu/Napcat/opt/QQ/resources/app/app_launcher/napcat/cache/qrcode.png'
+HOME = os.environ.get("BOT_HOME") or os.path.expanduser("~")
+PNG = os.environ.get("NAPCAT_QR_PNG") or os.path.join(HOME, "Napcat", "cache", "qrcode.png")
+if not os.path.exists(PNG):
+    _linux = os.path.join(HOME, "Napcat", "opt", "QQ", "resources", "app", "app_launcher", "napcat", "cache", "qrcode.png")
+    if os.path.exists(_linux):
+        PNG = _linux
 
 def decode(path):
     d=open(path,'rb').read()

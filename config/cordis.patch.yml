@@ -18,6 +18,6 @@
     groupPolicy: allowlist
     groupAllowFrom: ["1003871222", "877935643"]
     dmPolicy: open
-    workspacePath: /home/ubuntu
+    workspacePath: 'C:\Users\Administrator'
     logLevel: info
     interimMessages: false

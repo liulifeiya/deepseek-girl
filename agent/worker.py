@@ -18,9 +18,10 @@ import threading
 import time
 from datetime import datetime
 
-BASE = pathlib.Path(os.environ.get("AGENT_HOME", "/home/ubuntu/agent"))
-DSH = os.environ.get("AGENT_DSH_BIN", "/home/ubuntu/.local/share/pnpm/dsh")
-DSH_HOME = os.environ.get("DSH_HOME", "/home/ubuntu/.dsh-user")
+HOME = pathlib.Path(os.environ.get("BOT_HOME") or pathlib.Path.home())
+BASE = pathlib.Path(os.environ.get("AGENT_HOME", str(HOME / "agent")))
+DSH = os.environ.get("AGENT_DSH_BIN", "dsh")
+DSH_HOME = os.environ.get("DSH_HOME", str(HOME / ".dsh-user"))
 ENV_FILE = pathlib.Path(os.environ.get("AGENT_ENV_FILE", str(pathlib.Path(DSH_HOME) / "dsh-web.env")))
 PROFILE = os.environ.get("AGENT_PROFILE", "headless")
 DEFAULT_TIMEOUT = int(os.environ.get("AGENT_TIMEOUT", "1800"))
@@ -34,7 +35,7 @@ FAILED = BASE / "failed"
 LOGS = BASE / "logs"
 STATE = BASE / "state"
 WORK = BASE / "work"
-WORKDIR = pathlib.Path(os.environ.get("AGENT_WORKDIR", "/home/ubuntu"))
+WORKDIR = pathlib.Path(os.environ.get("AGENT_WORKDIR", str(HOME)))
 SESSION_FILE = STATE / "session.txt"
 BEATS_FILE = STATE / "beats.json"
 LAST_RUN_FILE = STATE / "last-run.txt"
@@ -75,9 +76,21 @@ def load_env() -> dict:
         except OSError:
             pass
     path = env.get("PATH", "")
-    for extra in ("/home/ubuntu/.local/node/bin", "/home/ubuntu/.local/share/pnpm", "/usr/local/bin", "/usr/bin", "/bin"):
-        if extra not in path.split(":"):
-            path = f"{extra}:{path}"
+    if os.name == "nt":
+        extras = [
+            r"C:\Program Files\nodejs",
+            str(HOME / "AppData" / "Roaming" / "npm"),
+        ]
+    else:
+        extras = [
+            str(HOME / ".local" / "node" / "bin"),
+            str(HOME / ".local" / "share" / "pnpm"),
+            "/usr/local/bin", "/usr/bin", "/bin",
+        ]
+    sep = os.pathsep
+    for extra in extras:
+        if extra and extra not in path.split(sep):
+            path = f"{extra}{sep}{path}"
     env["PATH"] = path
     return env
 

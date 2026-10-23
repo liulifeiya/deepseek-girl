@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """看图前预处理：不管原始后缀是什么，转成能读的 PNG 并打印路径。
 
-用法：python3 img-prep.py <图片路径>
+用法：python img-prep.py <图片路径>
 输出：可读 PNG 的绝对路径（同一张图复用缓存）
 """
 import hashlib
@@ -10,7 +10,8 @@ import sys
 
 from PIL import Image
 
-OUT_DIR = os.path.expanduser('~/qq-dsh-bot/image-lib/_prep')
+HOME = os.environ.get("BOT_HOME") or os.path.expanduser("~")
+OUT_DIR = os.path.join(HOME, "qq-dsh-bot", "image-lib", "_prep")
 
 
 def main():

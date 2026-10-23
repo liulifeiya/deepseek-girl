@@ -11,7 +11,10 @@
  */
 import { readFileSync } from 'node:fs';
 
-const CONFIG_PATH = process.env.SLEEP_WINDOW_CONFIG ?? '/home/ubuntu/.dsh-user/sleep-window.json';
+const HOME_DIR = process.env.BOT_HOME || process.env.USERPROFILE || process.env.HOME || process.cwd();
+const DSH_HOME = process.env.DSH_HOME || `${HOME_DIR}/.dsh-user`;
+
+const CONFIG_PATH = process.env.SLEEP_WINDOW_CONFIG ?? `${DSH_HOME}/sleep-window.json`;
 
 const DEFAULTS = {
     enabled: true,

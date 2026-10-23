@@ -2,7 +2,7 @@
 // 只写 ~/qq-dsh-bot/watchdog.log，不动别的。
 import fs from 'node:fs';
 
-const HOME = process.env.BOT_HOME || '/home/ubuntu';
+const HOME = process.env.BOT_HOME || process.env.USERPROFILE || process.env.HOME || process.cwd();
 const TOKEN = fs.readFileSync(`${HOME}/qq-dsh-bot/onebot-token.txt`, 'utf8').trim();
 const LOG = `${HOME}/qq-dsh-bot/watchdog.log`;
 const INTERVAL = 60_000;

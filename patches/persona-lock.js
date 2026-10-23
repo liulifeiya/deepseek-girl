@@ -7,7 +7,10 @@
  */
 import { readFileSync } from 'node:fs';
 
-const STORE_PATH = process.env.PERSONA_STORE ?? '/home/ubuntu/.dsh-user/storages/dsh-persona-dafeiyu/personas.json';
+const HOME_DIR = process.env.BOT_HOME || process.env.USERPROFILE || process.env.HOME || process.cwd();
+const DSH_HOME = process.env.DSH_HOME || `${HOME_DIR}/.dsh-user`;
+
+const STORE_PATH = process.env.PERSONA_STORE ?? `${DSH_HOME}/storages/dsh-persona-dafeiyu/personas.json`;
 const ADMIN_QQ = '2812108776';
 const CACHE_MS = 60_000;
 

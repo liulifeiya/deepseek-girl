@@ -2,7 +2,7 @@
 """群聊图片入库：按 sha256 去重，复制到图库并登记。
 
 用法：
-  python3 group-image-ingest.py <图片路径> [--chat 1003871222] [--sender 昵称或QQ] [--desc "一句话描述"]
+  python group-image-ingest.py <图片路径> [--chat 1003871222] [--sender 昵称或QQ] [--desc "一句话描述"]
 
 输出：NEW <hash前16位> <库内路径> 或 DUP <hash前16位> <已有路径>
 """
@@ -13,7 +13,8 @@ import os
 import shutil
 from datetime import datetime
 
-LIB = os.path.expanduser('~/qq-dsh-bot/image-lib')
+HOME = os.environ.get("BOT_HOME") or os.path.expanduser("~")
+LIB = os.path.join(HOME, "qq-dsh-bot", "image-lib")
 INDEX = os.path.join(LIB, 'index.jsonl')
 
 

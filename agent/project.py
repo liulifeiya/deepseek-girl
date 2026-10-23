@@ -20,7 +20,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-BASE = Path(os.environ.get("AGENT_HOME", "/home/ubuntu/agent"))
+HOME = Path(os.environ.get("BOT_HOME") or Path.home())
+BASE = Path(os.environ.get("AGENT_HOME", str(HOME / "agent")))
 PROJ = BASE / "projects"
 INBOX = BASE / "inbox"
 DONE = BASE / "done"
@@ -42,12 +43,20 @@ def notify(msg: str) -> None:
             f.write(line + "\n")
     except OSError:
         pass
-    hook = BASE / "hooks" / "on-notify.sh"
-    if hook.exists():
+    for name in ("on-notify.ps1", "on-notify.cmd", "on-notify.sh"):
+        hook = BASE / "hooks" / name
+        if not hook.exists():
+            continue
         try:
-            os.system(f"bash {hook} {json.dumps(msg)} >/dev/null 2>&1")
+            if name.endswith(".ps1"):
+                os.system(f'powershell -NoProfile -ExecutionPolicy Bypass -File "{hook}" {json.dumps(msg)} >NUL 2>&1')
+            elif name.endswith(".cmd"):
+                os.system(f'"{hook}" {json.dumps(msg)} >NUL 2>&1')
+            else:
+                os.system(f"bash {hook} {json.dumps(msg)} >/dev/null 2>&1")
         except OSError:
             pass
+        break
 
 
 def slugify(idea: str) -> str:
