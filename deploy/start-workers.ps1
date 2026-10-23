@@ -1,4 +1,4 @@
-# Start keepalive / guard / watchdog workers (one process each).
+﻿# Start keepalive / guard / watchdog workers (one process each).
 param([string]$Which = 'all')
 . "$PSScriptRoot\env.ps1"
 $node = 'C:\Program Files\nodejs\node.exe'

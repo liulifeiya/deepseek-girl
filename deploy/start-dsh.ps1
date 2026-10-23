@@ -1,4 +1,4 @@
-# Start the bot's DSH web backend (profile: qq, port 3081).
+﻿# Start the bot's DSH web backend (profile: qq, port 3081).
 . "$PSScriptRoot\env.ps1"
 
 # Load DEEPSEEK_API_KEY and friends from dsh-web.env (same role as systemd EnvironmentFile).

@@ -442,3 +442,42 @@ patch_group_wake(lib)
 patch_mention_context(lib)
 patch_sleep_window(lib)
 patch_persona_lock(lib)
+
+
+def patch_stt_windows(lib):
+    """stt.js: 语音转写模型路径加上 Windows 候选与 WHISPER_CPP_MODELS 覆盖。"""
+    path = os.path.join(lib, 'stt.js')
+    if not os.path.exists(path):
+        print('WARN: stt.js missing, skip whisper path patch')
+        return
+    with open(path) as f:
+        text = f.read()
+    if 'LOCAL PATCH (windows-paths)' in text:
+        print('stt.js: windows path patch already applied')
+        return
+    old = """    const candidates = [
+        '/opt/homebrew/share/whisper.cpp/models/' + name,
+        '/usr/local/share/whisper.cpp/models/' + name,
+        join(process.env.HOME ?? '', '.cache/whisper.cpp/' + name),
+        join(process.env.HOME ?? '', 'whisper.cpp/models/' + name),
+    ];"""
+    new = """    const candidates = [
+        // LOCAL PATCH (windows-paths): WHISPER_CPP_MODELS 优先，其次 Windows 常见目录
+        ...(process.env.WHISPER_CPP_MODELS
+            ? [join(process.env.WHISPER_CPP_MODELS, name)]
+            : []),
+        join(process.env.USERPROFILE ?? process.env.HOME ?? '', 'whisper.cpp', 'models', name),
+        join(process.env.LOCALAPPDATA ?? '', 'whisper.cpp', 'models', name),
+        '/opt/homebrew/share/whisper.cpp/models/' + name,
+        '/usr/local/share/whisper.cpp/models/' + name,
+        join(process.env.HOME ?? '', '.cache/whisper.cpp/' + name),
+        join(process.env.HOME ?? '', 'whisper.cpp/models/' + name),
+    ];"""
+    if old not in text:
+        print('WARN: whisper candidates anchor missing in stt.js')
+        return
+    with open(path, 'w') as f:
+        f.write(text.replace(old, new, 1))
+    print('stt.js: windows path patch applied')
+
+patch_stt_windows(lib)

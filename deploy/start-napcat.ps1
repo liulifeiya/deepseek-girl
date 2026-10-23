@@ -1,4 +1,4 @@
-# Start NapCat (injects into QQ and prints/updates the login QR).
+﻿# Start NapCat (injects into QQ and prints/updates the login QR).
 . "$PSScriptRoot\env.ps1"
 
 $n = 'C:\Users\Administrator\Napcat'

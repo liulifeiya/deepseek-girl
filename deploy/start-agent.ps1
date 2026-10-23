@@ -1,4 +1,4 @@
-# Start the always-on agent worker.
+﻿# Start the always-on agent worker.
 . "$PSScriptRoot\env.ps1"
 $env:AGENT_HOME = 'C:\Users\Administrator\agent'
 $env:AGENT_WORKDIR = 'C:\Users\Administrator'

@@ -1,4 +1,4 @@
-# Wait for the next NapCat QR refresh, copy it into the workspace with a unique
+﻿# Wait for the next NapCat QR refresh, copy it into the workspace with a unique
 # name (browser cache busting), and print the decode URL from the log.
 param([int]$TimeoutSec = 150)
 

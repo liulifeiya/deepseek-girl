@@ -1,4 +1,4 @@
-# Shared environment for the QQ bot on Windows.
+﻿# Shared environment for the QQ bot on Windows.
 # Dot-source this from every start script:  . "$PSScriptRoot\env.ps1"
 
 $env:DSH_HOME   = 'C:\Users\Administrator\.dsh-qq'

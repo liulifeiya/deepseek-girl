@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """常挂智能体的任务执行器。
 
-由 systemd (dsh-agent.service) 托管，断 SSH、关界面、重启都不影响。
+由计划任务（DshBot-Agent）托管，断连、关界面、重启都不影响。
 从 inbox/ 取任务，用一条持久 session 跑 dsh headless，结果落到 done/。
 """
 
-import fcntl
+try:
+    import fcntl
+except ImportError:  # Windows
+    fcntl = None
+    import msvcrt
 import json
 import os
 import pathlib
@@ -147,6 +151,18 @@ def parse_timeout(body: str) -> tuple[int, str]:
     return DEFAULT_TIMEOUT, body
 
 
+def kill_proc_tree(proc) -> None:
+    """跨平台杀掉子进程树（POSIX: killpg；Windows: taskkill /T）。"""
+    try:
+        if os.name == 'nt':
+            subprocess.run(['taskkill', '/F', '/T', '/PID', str(proc.pid)],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=15)
+        else:
+            os.killpg(proc.pid, signal.SIGKILL)
+    except Exception:
+        pass
+
+
 def run_dsh(prompt: str, timeout: int, log_path: pathlib.Path) -> dict:
     cmd = [DSH, "--profile", PROFILE, "--json"]
     sid = get_session()
@@ -170,7 +186,8 @@ def run_dsh(prompt: str, timeout: int, log_path: pathlib.Path) -> dict:
                 env=load_env(),
                 text=True,
                 bufsize=1,
-                start_new_session=True,
+                **({} if os.name == 'nt' else {'start_new_session': True}),
+                **({'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == 'nt' else {}),
             )
         except OSError as exc:
             result["error"] = f"启动失败: {exc}"
@@ -194,7 +211,7 @@ def run_dsh(prompt: str, timeout: int, log_path: pathlib.Path) -> dict:
         except OSError as exc:
             result["error"] = f"写入任务失败: {exc}"
             try:
-                os.killpg(proc.pid, signal.SIGKILL)
+                kill_proc_tree(proc)
             except OSError:
                 pass
             return result
@@ -237,7 +254,7 @@ def run_dsh(prompt: str, timeout: int, log_path: pathlib.Path) -> dict:
             result["timed_out"] = True
             result["error"] = f"超时 {timeout}s"
             try:
-                os.killpg(proc.pid, signal.SIGKILL)
+                kill_proc_tree(proc)
             except OSError:
                 pass
         rc = proc.wait(timeout=30)
@@ -342,7 +359,10 @@ def main() -> None:
     lock_path = STATE / "worker.lock"
     lock = open(lock_path, "w")
     try:
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        if fcntl is not None:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        else:  # Windows
+            msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
     except OSError:
         log("已有 worker 在跑，本实例退出")
         return
