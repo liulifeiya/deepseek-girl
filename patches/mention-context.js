@@ -23,8 +23,14 @@ function clockOf(ts) {
     return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
 }
 
-/** 所有群消息都记一条（在 @ 门控之前调用）。 */
-export function recordGroupMessage(inbound) {
+/**
+ * 所有群消息都记一条（在 @ 门控之前调用）。
+ *
+ * @param inbound 解析后的入站消息
+ * @param resolveMedia 可选：async () => [标注文字]，用来把图片/语音解析成本地路径。
+ *        群消息里的 [图片] 占位符没有路径，模型只能瞎猜；这里在后台补上。
+ */
+export function recordGroupMessage(inbound, resolveMedia) {
     try {
         if (inbound === undefined || inbound.kind !== 'group')
             return;
@@ -39,16 +45,28 @@ export function recordGroupMessage(inbound) {
             list = [];
             chats.set(chatId, list);
         }
-        list.push({
+        const entry = {
             at: Date.now(),
             userId: String(inbound.userId ?? ''),
             nickname: String(inbound.nickname ?? ''),
             text: text.slice(0, MAX_TEXT_CHARS),
             messageId: inbound.messageId,
             replyId: inbound.replyId,
-        });
+        };
+        list.push(entry);
         if (list.length > MAX_BUFFER)
             list.splice(0, list.length - MAX_BUFFER);
+        // 后台补齐媒体路径（不阻塞主管线）
+        if (Array.isArray(inbound.media) && inbound.media.length > 0 && typeof resolveMedia === 'function') {
+            Promise.resolve()
+                .then(() => resolveMedia())
+                .then((annotations) => {
+                const extra = (annotations || []).filter(Boolean).join(' ').trim();
+                if (extra !== '')
+                    entry.text = (entry.text + ' ' + extra).slice(0, MAX_TEXT_CHARS * 4);
+            })
+                .catch(() => { });
+        }
     }
     catch {
         // 纯旁路

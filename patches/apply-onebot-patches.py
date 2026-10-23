@@ -497,17 +497,57 @@ def patch_persona_api(lib):
 patch_persona_api(lib)
 
 def patch_mention_record(lib):
-    """inbound.js: 把每条群消息写进 mention-context 缓冲（@ 时才有前文）。"""
+    """inbound.js: 群消息进 mention-context 缓冲；带图时后台解析成本地路径。"""
     path = os.path.join(lib, 'inbound.js')
     if not os.path.exists(path):
         print('WARN: inbound.js missing, skip mention-record patch')
         return
     with open(path, encoding='utf-8') as f:
         text = f.read()
-    marker = 'LOCAL PATCH (mention-context): 所有群消息进上下文缓冲'
-    if marker in text:
+
+    marker_v2 = 'LOCAL PATCH (mention-context-v2)'
+    if marker_v2 in text:
         print('inbound.js: mention-record patch already applied')
         return
+
+    block = (
+        "        // LOCAL PATCH (mention-context-v2): 群消息进上下文缓冲，图片后台解析成路径\n"
+        "        if (kind === 'group') {\n"
+        "            try {\n"
+        "                recordGroupMessage(inbound, async () => {\n"
+        "                    const annotations = [];\n"
+        "                    for (const ref of inbound.media) {\n"
+        "                        try {\n"
+        "                            const annotation = await this.resolveMediaRef(ref, chatId);\n"
+        "                            if (annotation !== '')\n"
+        "                                annotations.push(annotation);\n"
+        "                        }\n"
+        "                        catch {\n"
+        "                        }\n"
+        "                    }\n"
+        "                    return annotations;\n"
+        "                });\n"
+        "            }\n"
+        "            catch {\n"
+        "            }\n"
+        "        }\n")
+
+    # v1 注入块（没有媒体解析）→ 原地替换
+    v1 = (
+        "        // LOCAL PATCH (mention-context): 所有群消息进上下文缓冲，@ 时才取用\n"
+        "        if (kind === 'group') {\n"
+        "            try {\n"
+        "                recordGroupMessage(inbound);\n"
+        "            }\n"
+        "            catch {\n"
+        "            }\n"
+        "        }\n")
+    if v1 in text:
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(text.replace(v1, block, 1))
+        print('inbound.js: mention-record upgraded to v2 (media aware)')
+        return
+
     anchor = ("        if (kind === 'group') {\n"
               "            try {\n"
               "                groupWake.note(this.ctx, { ...inbound, mentioned });\n"
@@ -518,16 +558,9 @@ def patch_mention_record(lib):
     if anchor not in text:
         print('WARN: group-wake anchor missing in inbound.js')
         return
-    block = ("        // LOCAL PATCH (mention-context): 所有群消息进上下文缓冲，@ 时才取用\n"
-             "        if (kind === 'group') {\n"
-             "            try {\n"
-             "                recordGroupMessage(inbound);\n"
-             "            }\n"
-             "            catch {\n"
-             "            }\n"
-             "        }\n")
-    open(path, 'w', encoding='utf-8').write(text.replace(anchor, anchor + block, 1))
-    print('inbound.js: mention-record patch applied')
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(text.replace(anchor, anchor + block, 1))
+    print('inbound.js: mention-record patch applied (v2, media aware)')
 
 
 patch_mention_record(lib)
