@@ -180,6 +180,10 @@ if ($DryRun) {
     if ($LASTEXITCODE -eq 0) { $patched = $true } else { Start-Sleep -Seconds 3 }
   }
   if (-not $patched) { throw 'apply-onebot-patches.py failed after 3 attempts' }
+
+  # archive-retention 补丁：文件名兼容 / dryRun / 清单 / cron 校验 / 状态持久化 / 跨进程锁
+  & $py (Join-Path $Repo 'patches\patch-archive-retention.py')
+  if ($LASTEXITCODE -ne 0) { throw 'patch-archive-retention.py failed' }
 }
 
 # ---------------------------------------------------------------- 40-botfiles

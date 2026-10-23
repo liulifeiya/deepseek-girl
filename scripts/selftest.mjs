@@ -70,6 +70,14 @@ try {
 } catch (e) { fail('image-hash', e.message); }
 
 try {
+  // 补丁是否还在（pnpm install 会还原 node_modules）
+  const p = path.join(DSH_HOME, 'profiles', 'qq', 'node_modules', '@momojie-s', 'dsh-archive-retention', 'lib', 'index.js');
+  const s = fs.readFileSync(p, 'utf8');
+  const hasAll = ['LOCAL PATCH (retention-fix)', 'latestArtifactSync', 'takeLock', 'wouldDelete'].every((k) => s.includes(k));
+  check('archive-retention', hasAll, hasAll ? '文件名兼容/dryRun/锁 均已打' : '补丁缺失，跑一次 patch-archive-retention.py');
+} catch (e) { fail('archive-retention', e.message); }
+
+try {
   const cfgPath = path.join(HOME, 'qq-dsh-bot', 'group-wake-selftest.json');
   // 必须在 import 之前设置：模块在加载时就算好了 CONFIG_PATH
   process.env.GROUP_WAKE_CONFIG = cfgPath;

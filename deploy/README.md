@@ -79,6 +79,17 @@ NapCat 不能自动登录，第一次要扫码：
 | `render-napcat-config.py` | 生成 NapCat 配置 |
 | `install-tasks.ps1` | 注册 10 个计划任务 |
 | `run-monthly.ps1` / `run-proactive.ps1` | 月度记忆整理 / 主动问候 |
+| `restart-workers.ps1` | 只重启 guard/keepalive/watchdog（避免误杀调用方） |
+| `selftest.ps1` | 部署自检：模块行为 + 接口 + headless shell |
+
+## 本地补丁（`patches/`）
+
+`pnpm install` 会还原 `node_modules`，所以插件补丁必须可重放。`install.ps1` 会自动跑：
+
+| 脚本 | 作用 |
+|---|---|
+| `apply-onebot-patches.py` | dsh-onebot-qq：引用回复 / 分段 / 群聊插话 / @ 上下文 / 作息 / 人设锁定 / 语音模型路径 / 图片入库 / `/persona` 端口 |
+| `patch-archive-retention.py` | archive-retention：会话文件名兼容、dryRun、清单含失败、cron 校验、状态持久化、跨进程锁 |
 
 ## 计划任务
 

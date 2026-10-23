@@ -58,9 +58,9 @@ profile `qq` 装了 6 个插件：`dsh-onebot-qq 0.9.3`、`dsh-persona-dafeiyu 0
 | dsh-persona-dafeiyu | 功能正常；但仓库自带人设卡**没有导入**，只有 3 个内置人设 | `scripts/import-personas.py` 导入 3 张卡 |
 | dsh-persona-dafeiyu | 会话→人设绑定是**进程内状态**，重启即丢 | 新增每分钟计划任务 `DshBot-PersonaBind` 兜底 |
 | dsh-proactive | 正常；数据目录 `.dsh-qq\proactive`，安静时段 23:00–08:00 | 无需改动 |
-| dsh-openwolf | 已自带 Windows 分支（`cmd.exe /c pnpm`）；`git` 缺失时降级 | 无需改动 |
+| dsh-openwolf | 会给 AGENTS.md 注入 20KB 解剖表（含 QQ 表情包路径），每轮白烧 token | 配置 `injectAgentsMd: false` + ignore 列表 |
 | dsh-cron | 纯解析库，peer 依赖由 dsh 提供 | 无需改动 |
-| dsh-archive-retention | 正常；保留 7 天 | 无需改动 |
+| dsh-archive-retention | 会话文件名写死 `session.jsonl.zstd`（实际 `session.v4.jsonl.zstd`），孤儿清理失效；无 dryRun；失败不落盘；非法 cron 静默；重启丢 lastSweepAt；无跨进程锁 | `patches/patch-archive-retention.py` 一次性修掉这 6 项 |
 
 ## 四、Windows 上的路径约定
 
