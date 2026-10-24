@@ -152,6 +152,22 @@ $py = 'C:\Program Files\Python312\python.exe'
 & $py "$env:USERPROFILE\qq-dsh-bot\kb.py" rm --url <URL>
 ```
 
+### 表情包库（`%USERPROFILE%\stickers`）
+
+网络上看到的图可以存进表情包库，聊天时直接发：
+
+```powershell
+$py = 'C:\Program Files\Python312\python.exe'
+& $py "$env:USERPROFILE\qq-dsh-bot\meme-lib.py" add --url "<图片URL>" --tags "猫,无语" --source "<来源页>"
+& $py "$env:USERPROFILE\qq-dsh-bot\meme-lib.py" from-page --url "<页面URL>" --limit 3 --tags "梗图"
+& $py "$env:USERPROFILE\qq-dsh-bot\meme-lib.py" list / search 猫 / stats
+```
+
+- 校验图片头（png/jpg/gif/webp）、单张 ≤8MB、按 sha256 去重（重复输出 `DUP`）；
+- 元数据写 `stickers\index.jsonl`（file/hash/url/page/tags/bytes/at）；
+- 下载走系统 `curl.exe`：Windows 的 Python 常缺 CA 根证书，urllib 直连会 `CERTIFICATE_VERIFY_FAILED`；
+- `from-page` 只解析 HTML 里的 `<img>`/`og:image`，对 JS 渲染的站点无效；外网站点受网络可达性限制。
+
 ### 表情包补习队列
 
 群里发来她看不懂的表情包时，按 `AGENTS.md` 的规则：先自然回一句（不装懂、不编角色名），
