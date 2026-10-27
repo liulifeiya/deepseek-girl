@@ -1,0 +1,122 @@
+{
+  "name": "dsh-mood",
+  "version": "0.14.15",
+  "description": "DeepSeek Harness 心情插件：33 种心情各有数值，每 3~6 小时自动判定，用户消息小幅累积加减分，达到余量才切换，支持混合心情；附带每日心情日记、跨会话可检索的硬盘记忆；把当前心情注入提示词，影响回复语气和深度思考里的内心话。附带每天 23:59 自动生成的心情日记、用户自配来源的时事、可选的主动开口，以及可迁移到任意盘的数据目录。",
+  "type": "module",
+  "main": "index.js",
+  "icon": "./icon.svg",
+  "files": [
+    "asr.js",
+    "client.js",
+    "diary.js",
+    "frames.js",
+    "index.js",
+    "measure.js",
+    "memory.js",
+    "news.js",
+    "proactive.js",
+    "procedures.js",
+    "sessions.js",
+    "sidx.js",
+    "store.js",
+    "taste.js",
+    "test-api.mjs",
+    "test-client.mjs",
+    "test-decay.mjs",
+    "test-deep.mjs",
+    "test-diary-crypto.mjs",
+    "test-diary.mjs",
+    "test-events.mjs",
+    "test-fixtures.mjs",
+    "test-frames.mjs",
+    "test-logic.mjs",
+    "test-memory-e2e.mjs",
+    "test-memory.mjs",
+    "test-modern.mjs",
+    "test-news.mjs",
+    "test-optimization.mjs",
+    "test-order.mjs",
+    "test-porting.mjs",
+    "test-proactive.mjs",
+    "test-restart.mjs",
+    "test-romance.mjs",
+    "test-savefail.mjs",
+    "test-sessions.mjs",
+    "test-taste.mjs",
+    "test-tools.mjs",
+    "test-unlimited.mjs",
+    "test-voice.mjs",
+    "testkit.mjs",
+    "README.md",
+    "PORTING.md",
+    "CHANGELOG.md",
+    "手机版_心情提示词.md",
+    "LICENSE",
+    "cordis.patch.yml",
+    "icon.svg",
+    "fixtures",
+    "install-git.ps1"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./store": "./store.js",
+    "./diary": "./diary.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json",
+    "./news": "./news.js",
+    "./proactive": "./proactive.js",
+    "./sessions": "./sessions.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-connection",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "*"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "deepseek-harness",
+    "deepseek",
+    "mood",
+    "emotion",
+    "persona",
+    "prompt",
+    "agent",
+    "心情"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JMX-4869/dsh-mood.git"
+  },
+  "homepage": "https://github.com/JMX-4869/dsh-mood#readme",
+  "bugs": {
+    "url": "https://github.com/JMX-4869/dsh-mood/issues"
+  },
+  "author": "一叶子秋 <245824865+JMX-4869@users.noreply.github.com>",
+  "devDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "jsdom": "^30.0.0"
+  },
+  "scripts": {
+    "test": "node scan-private.mjs && node smoke.mjs && node test-optimization.mjs && node test-api.mjs && node test-client.mjs && node test-decay.mjs && node test-deep.mjs && node test-diary.mjs && node test-events.mjs && node test-fixtures.mjs && node test-asr.mjs && node test-frames.mjs && node test-logic.mjs && node test-memory-e2e.mjs && node test-memory.mjs && node test-modern.mjs && node test-news.mjs && node test-order.mjs && node test-porting.mjs && node test-proactive.mjs && node test-restart.mjs && node test-romance.mjs && node test-savefail.mjs && node test-sessions.mjs && node test-tools.mjs && node test-voice.mjs && node test-taste.mjs",
+    "smoke": "node smoke.mjs",
+    "test:e2e": "node test-asr-e2e.mjs",
+    "scan": "node scan-private.mjs"
+  }
+}

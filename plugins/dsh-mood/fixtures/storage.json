@@ -1,0 +1,89 @@
+{
+  "ok": true,
+  "dir": "D:\\path\\to\\data",
+  "home": "C:\\path\\to\\home",
+  "pointerFile": "C:\\path\\to\\home\\dsh-mood-store.json",
+  "custom": "D:\\path\\to\\data",
+  "dirs": {},
+  "isCustom": true,
+  "files": [
+    {
+      "name": "dsh-mood.json",
+      "key": "state",
+      "label": "心情状态",
+      "owner": "mood",
+      "dir": "D:\\path\\to\\data",
+      "configured": null,
+      "path": "D:\\path\\to\\data\\dsh-mood.json",
+      "exists": true,
+      "size": 4525
+    },
+    {
+      "name": "dsh-mood-diary.json",
+      "key": "diary",
+      "label": "日记",
+      "owner": "mood",
+      "dir": "D:\\path\\to\\data",
+      "configured": null,
+      "path": "D:\\path\\to\\data\\dsh-mood-diary.json",
+      "exists": true,
+      "size": 143791
+    },
+    {
+      "name": "dsh-mood-diary.key",
+      "key": "diary",
+      "label": "日记密钥（丢了日记就打不开）",
+      "owner": "mood",
+      "dir": "D:\\path\\to\\data",
+      "configured": null,
+      "path": "D:\\path\\to\\data\\dsh-mood-diary.key",
+      "exists": true,
+      "size": 44
+    },
+    {
+      "name": "dsh-mood-news.json",
+      "key": "news",
+      "label": "时事",
+      "owner": "news",
+      "dir": "D:\\path\\to\\data",
+      "configured": null,
+      "path": "D:\\path\\to\\data\\dsh-mood-news.json",
+      "exists": true,
+      "size": 30915
+    },
+    {
+      "name": "dsh-mood-proactive.json",
+      "key": "proactive",
+      "label": "主动开口",
+      "owner": "proactive",
+      "dir": "D:\\path\\to\\data",
+      "configured": null,
+      "path": "D:\\path\\to\\data\\dsh-mood-proactive.json",
+      "exists": true,
+      "size": 763
+    },
+    {
+      "name": "dsh-mood-memory.jsonl",
+      "key": "memory",
+      "label": "硬盘记忆",
+      "owner": "memory",
+      "dir": "D:\\path\\to\\data",
+      "configured": null,
+      "path": "D:\\path\\to\\data\\dsh-mood-memory.jsonl",
+      "exists": true,
+      "size": 500660
+    },
+    {
+      "name": "dsh-mood-taste.json",
+      "key": "taste",
+      "label": "品味库",
+      "owner": "taste",
+      "dir": "D:\\path\\to\\data",
+      "configured": null,
+      "path": "D:\\path\\to\\data\\dsh-mood-taste.json",
+      "exists": true,
+      "size": 74694
+    }
+  ],
+  "leftovers": []
+}

@@ -1,0 +1,475 @@
+{
+  "ok": true,
+  "count": 3,
+  "at": 1700000000000,
+  "ageMin": 177,
+  "fresh": true,
+  "file": "D:\\path\\to\\data\\dsh-mood-news.json",
+  "presets": [
+    {
+      "label": "V2EX",
+      "url": "https://www.v2ex.com/index.xml",
+      "kind": "rss"
+    },
+    {
+      "label": "IT之家",
+      "url": "https://www.ithome.com/rss/",
+      "kind": "rss"
+    },
+    {
+      "label": "少数派",
+      "url": "https://sspai.com/feed",
+      "kind": "rss"
+    },
+    {
+      "label": "Hacker News 首页",
+      "url": "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=12",
+      "kind": "json"
+    },
+    {
+      "label": "arXiv cs.AI",
+      "url": "https://rss.arxiv.org/rss/cs.AI",
+      "kind": "rss"
+    },
+    {
+      "label": "arXiv cs.CL",
+      "url": "https://rss.arxiv.org/rss/cs.CL",
+      "kind": "rss"
+    },
+    {
+      "label": "Nature",
+      "url": "https://www.nature.com/nature.rss",
+      "kind": "rss"
+    },
+    {
+      "label": "It's Nice That",
+      "url": "https://www.itsnicethat.com/",
+      "kind": "auto"
+    },
+    {
+      "label": "量子位",
+      "url": "https://www.qbitai.com/",
+      "kind": "auto"
+    }
+  ],
+  "sources": [
+    {
+      "id": "hn",
+      "label": "Hacker News 首页",
+      "url": "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=12",
+      "kind": "json",
+      "limit": 10
+    },
+    {
+      "id": "ithome",
+      "label": "IT之家",
+      "url": "https://www.ithome.com/rss/",
+      "kind": "rss",
+      "limit": 10
+    },
+    {
+      "id": "sspai",
+      "label": "少数派",
+      "url": "https://sspai.com/feed",
+      "kind": "rss",
+      "limit": 10
+    },
+    {
+      "id": "v2ex",
+      "label": "V2EX",
+      "url": "https://www.v2ex.com/index.xml",
+      "kind": "rss",
+      "limit": 10
+    },
+    {
+      "id": "src-o88ohk",
+      "label": "bilibili",
+      "url": "https://www.bilibili.com/",
+      "kind": "auto",
+      "limit": 10
+    },
+    {
+      "id": "src-06m511",
+      "label": "arXiv cs.AI",
+      "url": "https://rss.arxiv.org/rss/cs.AI",
+      "kind": "rss",
+      "limit": 10
+    },
+    {
+      "id": "src-c9bw88",
+      "label": "arXiv cs.CL",
+      "url": "https://rss.arxiv.org/rss/cs.CL",
+      "kind": "rss",
+      "limit": 10
+    },
+    {
+      "id": "src-mzc3ku",
+      "label": "Nature",
+      "url": "https://www.nature.com/nature.rss",
+      "kind": "rss",
+      "limit": 10
+    },
+    {
+      "id": "src-y5b9uo",
+      "label": "It's Nice That",
+      "url": "https://www.itsnicethat.com/",
+      "kind": "auto",
+      "limit": 10
+    },
+    {
+      "id": "src-09ptya",
+      "label": "量子位",
+      "url": "https://www.qbitai.com/",
+      "kind": "auto",
+      "limit": 10
+    }
+  ],
+  "report": [
+    {
+      "id": "v2ex",
+      "label": "V2EX",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    },
+    {
+      "id": "src-o88ohk",
+      "label": "bilibili",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    },
+    {
+      "id": "hn",
+      "label": "Hacker News 首页",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    },
+    {
+      "id": "sspai",
+      "label": "少数派",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    },
+    {
+      "id": "src-c9bw88",
+      "label": "arXiv cs.CL",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    },
+    {
+      "id": "src-09ptya",
+      "label": "量子位",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    },
+    {
+      "id": "src-y5b9uo",
+      "label": "It's Nice That",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    },
+    {
+      "id": "src-06m511",
+      "label": "arXiv cs.AI",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    },
+    {
+      "id": "ithome",
+      "label": "IT之家",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    },
+    {
+      "id": "src-mzc3ku",
+      "label": "Nature",
+      "ok": true,
+      "count": 3,
+      "error": ""
+    }
+  ],
+  "items": [
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[程序员] deepseek 发钱了",
+      "url": "https://www.v2ex.com/t/1249099#reply4",
+      "media": "article",
+      "excerpt": "• 请不要在回答技术问题时复制粘贴 AI 生成的内容 北京时间 2026 年 10 月 15 日 8:11 至 13:04 期间，我们的服务系统出现故障，导致该时段内 API 服务无法正常使用。对于此次故障给您带来的不便与困扰，我们深表歉意。我们已第一时间启动针对服务稳定性的全面排查和彻底整改，全面梳理并剥离单点依赖，坚决杜绝同类问题再次发生。 作为补偿，我们将按您账号 7 日内（ 10.8-10.14 ）的消耗金额以赠金形式全额返还，赠金自动到账，API 计费扣款先从赠金账户扣除。此次故障对您造成了影响，我们再次致歉，感谢您一直以来的信任与支持。 3 条回复 • 2026-10-15 17:26:00 +08:00 跟 codex 的 reset 差不多啊 https://liang.itsuyo.top/ 关于 · 帮助文档 · 自助推广系统 · 博客 · API · FAQ · Privacy · Solana · 5347 人在线 最高记录 6679 · Select Language World is powered by solitude VERSION: 3.9.8.5 · 26ms · UTC 09:27 · PVG 17:27 · LAX 02:27 · JFK 05:27 ♥ Do have faith in what you're doing.",
+      "comments": [
+        "送了 13.14😂 2 voiyy 1 分钟前",
+        "跟 codex 的 reset 差不多啊 3 lpy137510 1 分钟前",
+        "梁祖 https://liang.itsuyo.top/ <div id=\"DigitalOcea"
+      ],
+      "note": ""
+    },
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[OpenAI] 网页和桌面客户端失败，手机和 iPad 客户端正常",
+      "url": "https://www.v2ex.com/t/1249098#reply2",
+      "media": "article",
+      "excerpt": "V2EX › OpenAI 今天上午就这样，网页和桌面客户端的 chat 模式一直跳 model not found ，但是 work 模式又是正常的。手机和 ipad 客户端，无论 chat 还是 work 模式都正常。使用的节点通过 ip 网站检测，可以打开 chatgpt ，理论上节点没问题。我就纳闷了，如果真有问题，那不应该整体一起啊，怎么还 chat 不行，work 可以，移动客户端又两个都行。 2 条回复 • 2026-10-15 17:25:20 +08:00 AI 大人不是全能全知的神吗？问 AI 呀 issacleelxf OP @ nomansky 问了，屁用没有，总感觉怪怪的 关于 · 帮助文档 · 自助推广系统 · 博客 · API · FAQ · Privacy · Solana · 5359 人在线 最高记录 6679 · Select Language World is powered by solitude VERSION: 3.9.8.5 · 29ms · UTC 09:25 · PVG 17:25 · LAX 02:25 · JFK 05:25 ♥ Do have faith in what you're doing.",
+      "comments": [
+        "AI 大人不是全能全知的神吗？问 AI 呀 2 issacleelxf OP 刚刚",
+        "@ nomansky 问了，屁用没有，总感觉怪怪的"
+      ],
+      "note": ""
+    },
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[程序员] 我开了一家 996 公司，但公司禁止 996",
+      "url": "https://www.v2ex.com/t/1249097#reply1",
+      "media": "article",
+      "excerpt": "• 请不要在回答技术问题时复制粘贴 AI 生成的内容 目前公司刚成立，没有老板，员工也没几个，办公室也比较空。 前端 / 后端 / 运维 / 产品 / 设计 只要上过班，都算有相关工作经验。 1 条回复 • 2026-10-15 17:12:16 +08:00 还是人类麻烦。都开了用 AI agents 关于 · 帮助文档 · 自助推广系统 · 博客 · API · FAQ · Privacy · Solana · 5340 人在线 最高记录 6679 · Select Language World is powered by solitude VERSION: 3.9.8.5 · 73ms · UTC 09:26 · PVG 17:26 · LAX 02:26 · JFK 05:26 ♥ Do have faith in what you're doing.",
+      "comments": [
+        "还是人类麻烦。都开了用 AI agents .wwads-cn { border-radius: 3px !important; } .wwads-text { color: var(--link-color) !import"
+      ],
+      "note": ""
+    },
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[分享创造] BudHold — macOS 防休眠与合盖远程保活工具",
+      "url": "https://www.v2ex.com/t/1249096#reply4",
+      "media": "article",
+      "excerpt": "BudHold 是一款基于 Swift + IOKit + SwiftUI 编写的原生 macOS 电源保活与远程值守工具。 它能够实时检测当前 macOS 系统版本与硬件信息，阻止电脑进入睡眠——即使 MacBook 合上盖子（无外接显示器）或显示器被关闭，系统、网络与桌面图形帧缓冲也保持 100% 活跃，让 RustDesk 、VNC 、屏幕共享或 SSH 可随时远程连接且不会遇到黑屏或断联。 此外，BudHold 内置了 按需启用（非必须项） 的 RustDesk 状态监控与进程守护模块，不强制依赖 RustDesk ，兼顾通用防休眠与远程控制场景。 ps：Gemini 本来推荐 Amphetamine ，测试了下完全不管用，于是用 Gemini 4 撸了一个，虽然界面布局一般，但功能测试了没问题。 https://github.com/budwk/budhold 4 条回复 • 2026-10-15 17:18:19 +08:00 这两天刚好也用了 Amphetamine ，发现这个软件有个毛病，每次合盖，再打开，设置就会失效，需要重建会话 自从有了 AI ，我电脑各种 App 都要打架了 @ Dogergo 是的，就是 Amphetamine 长期没更新了，不管用才自撸的 关于 · 帮助文档 · 自助推广系统 · 博客 · API · FAQ · Privacy · So",
+      "comments": [
+        "这两天刚好也用了 Amphetamine ，发现这个软件有个毛病，每次合盖，再打开，设置就会失效，需要重建会话 2 nomansky 6 分钟前",
+        "自从有了 AI ，我电脑各种 App 都要打架了 3 fish2050 OP 6 分钟前",
+        "4 fish2050 OP 5 分钟前",
+        "@ Dogergo 是的，就是 Amphetamine 长期没更新了，不管用才自撸的 .wwads-cn { border-radius: 3px !important"
+      ],
+      "note": ""
+    },
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[酷工作] 招聘｜ AI / Agent、Go / Java 、前端与安全等 46 个技术岗位",
+      "url": "https://www.v2ex.com/t/1249095#reply0",
+      "media": "article",
+      "excerpt": "• 外包信息请发到 /go/outsourcing 节点。 • 不要把相同的信息发到不同的节点 本次开放技术相关岗位，覆盖 AI 应用、算法、前后端、客户端、安全及技术平台方向，欢迎按方向投递。 🤖 AI 应用 / Agent （ 9 ） - LLM 应用研发工程师 - AI 应用开发（模型 / Agent / AIGC ） - AI 应用 Golang 后端工程师 - Prompt 优化工程师 - AI 模型训练师 / AIGC 模型工程师 🎬 AI 内容 / 视频工程（ 5 ） - AI 视频工作流专家 - 高级 AI 内容工程师 - AI 内容工程师（ AI 视频生产） - AI 视频内容工程师（ AI 短剧 / AIGC ） - AIGC 内容编辑师（ ComfyUI 工程师） - AI Algorithm Engineer - 广告算法工程师 / 高级广告算法工程师 - 高级 Java 工程师（推荐系统方向） ⚙️ 后端 / 服务端（ 10 ） - 高级后端工程师（ Java / Go 双栈） - 后端工程师（ Golang · 高级） - 高级服务器开发工程师 - Golang 开发工程师 - Golang 语言开发工程师 - Golang 、PHP 开发工程师 - 项目开发工程师 — 视频站方向（ Golang ） 🖥 前端 / 客户端（ 9 ） - 前端负责人",
+      "comments": [],
+      "note": ""
+    },
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[AI Agent 智能体] 大家目前用的什么 code plan 聊聊你们的方案😄",
+      "url": "https://www.v2ex.com/t/1249094#reply3"
+    },
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[分享创造] 车还没买，出场方式先安排上了： Unforgettable Car AI「召唤座驾」小网站",
+      "url": "https://www.v2ex.com/t/1249093#reply1"
+    },
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[推广] 🎁送点适合做 YouTube、X 、Facebook 的家宽资源 IP",
+      "url": "https://www.v2ex.com/t/1249092#reply0"
+    },
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[Apple] Apple Music 国区又要涨价了",
+      "url": "https://www.v2ex.com/t/1249091#reply4"
+    },
+    {
+      "source": "v2ex",
+      "sourceLabel": "V2EX",
+      "title": "[Apple] 关于自然滚动：我们两个都被苹果调教了，但竟然是相反方向",
+      "url": "https://www.v2ex.com/t/1249090#reply3"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "“什么情况？杀不死？”“月君，笔记的储备还充足吗？”",
+      "url": "https://www.bilibili.com/video/BV1Sepk6bEZC"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "12个脑洞大开的做饭方式！",
+      "url": "https://www.bilibili.com/video/BV1Jjpg6QEkh"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "用十三年去拍一部纪录片，然后明白死亡只是一个炎热的夏天午后 【探照灯计划】",
+      "url": "https://www.bilibili.com/video/BV1jkp36XEtz"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "拔弹夹来了！",
+      "url": "https://www.bilibili.com/video/BV1yFWA6VENt"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "李秀满新团A2O LITE很好但…",
+      "url": "https://www.bilibili.com/video/BV1L8p26UEm8"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "「根本没有这种邦布!?」大合集(终)",
+      "url": "https://www.bilibili.com/video/BV1krpB6MEDS"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "他们居然不让我吸数据",
+      "url": "https://www.bilibili.com/video/BV1WGp26cEUW"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "【终末地】祀·首发攻略！人权降临？冰队王朝？技能武器+装备配队+操作思路+基质升级差距+抽取建议！祀全方位强度养成攻略！明日方舟终末地",
+      "url": "https://www.bilibili.com/video/BV1zhJC6zESP"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "乌铜走银",
+      "url": "https://www.bilibili.com/video/BV1Bjp966EA8"
+    },
+    {
+      "source": "src-o88ohk",
+      "sourceLabel": "bilibili",
+      "title": "【异环】明音凛全攻略！ 搞乐队的数值都这么高？我要弹春日影！ 配队养成＋保姆级操作讲解+进阶合轴教学",
+      "url": "https://www.bilibili.com/video/BV1BeJC6qEAr"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "Things to know when you get cancer",
+      "url": "https://jjmaxwell4.com/writing/things-to-know-when-you-get-cancer/"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "Containment and monitoring failures are to blame for AI hacking reports: experts",
+      "url": "https://www.csoonline.com/article/4234854/ai-agents-arent-going-rogue-frontier-labs-are-skipping-security-basics.html"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "How Amazon pushes up prices all across the Internet",
+      "url": "https://www.not-ship.com/how-amazon-pushes-up-prices-all-across-the-internet/"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "Do dentists know what they're doing?",
+      "url": "https://mapwriting.substack.com/p/dentists"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "OpenCode 2.0",
+      "url": "https://anoma.ly/notes/opencode-2-0/"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "Tiny Little Office",
+      "url": "https://tinylittleoffice.com/"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "Americans' social activity has steeply declined in the past 30 years",
+      "url": "https://www.dataforprogress.org/blog/2026/9/29/americans-social-activity-has-steeply-declined-in-the-past-30-years"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "Why is every rationalist blog post way too long?",
+      "url": "https://alexwennerberg.com/blog/2026-10-13-long.html"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "We’re releasing Jev 1.14.0 along with experimental features for dreamers",
+      "url": "https://typesafe.ai/blog/jev-1-14"
+    },
+    {
+      "source": "hn",
+      "sourceLabel": "Hacker News 首页",
+      "title": "Better HTTP/1 connection reuse in Go 1.27",
+      "url": "https://go.dev/blog/http-connection-reuse"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "顺应变化，重申标准：《少数派创作手册》修订说明",
+      "url": "https://sspai.com/post/116181"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "学得会的快捷指令，零基础入门苹果效率魔法",
+      "url": "https://sspai.com/post/116182"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "App+1｜Mangata：把每次散步当作一次探索旅行",
+      "url": "https://sspai.com/post/115238"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "派早报：Mozilla 推出企业版火狐浏览器、DLSS 5 最新模型即将推送等",
+      "url": "https://sspai.com/post/116193"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "认知心理学背后的播客剪辑技巧",
+      "url": "https://sspai.com/post/114861"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "带给摄影师更多自由：Austin Mann 评 iPhone 18 Pro 影像体验",
+      "url": "https://sspai.com/post/115426"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "家中、这里、那里——Sonos Play 体验",
+      "url": "https://sspai.com/post/115382"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "众测招募 | 从客厅到耳畔，Sonos 双新品 Beam Ultra 与 Ace Ultra 抢先体验",
+      "url": "https://sspai.com/post/116109"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "已经能测夜间体征的 Apple Watch，为什么要再做一个睡眠呼吸暂停提醒",
+      "url": "https://sspai.com/post/92653"
+    },
+    {
+      "source": "sspai",
+      "sourceLabel": "少数派",
+      "title": "派早报：Apple 发布 HomePod mini 2、HomeView 等新品",
+      "url": "https://sspai.com/post/116138"
+    }
+  ]
+}

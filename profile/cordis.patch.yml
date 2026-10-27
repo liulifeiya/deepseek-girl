@@ -1,0 +1,80 @@
+- id: agent-default-model
+  name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    provider: deepseek-account
+    model: deepseek-flash
+    reasoningEffort: max
+- id: ui-settings-account
+  name: '@deepseek-ai/dsh-client-ui-settings-account'
+  config:
+    version: 1
+    step: done
+    purpose: development
+    process: detailed
+    completion: completed
+    usage: detailed
+    developerTools: true
+- id: ui-chat
+  name: '@deepseek-ai/dsh-client-ui-chat'
+  config:
+    transcriptView: detailed
+    performanceUsage: detailed
+- id: ui-settings
+  name: '@deepseek-ai/dsh-client-ui-settings'
+  config:
+    enabled: true
+- id: permission
+  name: '@deepseek-ai/dsh-permission-presets'
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+    defaultPreset: danger-full-access
+
+# === qq-bridge MCP BEGIN ===
+# 这三条 MCP 服务来自 qq-bridge 项目（把 QQ 接进 DSH 的桥接层）。
+# 原文件里是本机绝对路径，这里换成占位符：
+#   <NODE_EXE>         → DSH 自带的 node 可执行文件
+#   <QQ_BRIDGE_DIR>    → qq-bridge 的部署目录
+# 想照抄的话，把这两处替换成你自己的路径即可。
+- insert:
+    - id: mcp-snowluma
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: snowluma
+        transport: stdio
+        command: '<NODE_EXE>'
+        args:
+          - '<QQ_BRIDGE_DIR>/src/mcp-snowluma-safe.js'
+        toolCallTimeoutMs: 725000
+- insert:
+    - id: mcp-snowluma-host
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: snowluma-host
+        transport: stdio
+        command: '<NODE_EXE>'
+        args:
+          - '<QQ_BRIDGE_DIR>/src/mcp-host-server.js'
+- insert:
+    - id: mcp-web-search-safe
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: web-search-safe
+        transport: stdio
+        command: '<NODE_EXE>'
+        args:
+          - '<QQ_BRIDGE_DIR>/src/mcp-web-search-safe.js'
+- id: qq-mode
+  name: qq-mode-console
+  config:
+    mode: closed-agent
+
+# === qq-bridge MCP END ===

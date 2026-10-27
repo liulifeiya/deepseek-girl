@@ -1,0 +1,7 @@
+node_modules/
+.pnpm/
+*.log
+*.zip
+*.map
+.DS_Store
+Thumbs.db

@@ -1,0 +1,24 @@
+﻿{
+  "name": "dsh-profile-desktop",
+  "private": true,
+  "dependencies": {
+    "@huanlin/dsh-plugin-android-use": "https://codeload.github.com/HuanLinOTO/dsh-plugin-android-use/tar.gz/master?x=.tgz",
+    "dsh-memes-reply": "https://codeload.github.com/liceses/dsh-memes-reply/tar.gz/main?x=.tgz",
+    "dsh-mood": "https://codeload.github.com/JMX-4869/dsh-mood/tar.gz/main?x=.tgz",
+    "qq-agent-presets": "link:./plugins/qq-agent-presets",
+    "qq-mode-console": "link:./plugins/qq-mode-console"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "qq-mode-console",
+        "qq-agent-presets",
+        "dsh-mood",
+        "dsh-memes-reply",
+        "@huanlin/dsh-plugin-android-use"
+      ]
+    }
+  }
+}
